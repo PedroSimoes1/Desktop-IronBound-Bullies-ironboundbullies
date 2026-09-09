@@ -1,0 +1,137 @@
+/* =============================================================================
+   IRONBOUND BULLIES — DESIGN TOKENS
+   Concept B "Iron": black ground, heavy condensed display type, one amber accent.
+
+   Every visual decision on the site starts here. Components reference these
+   custom properties; they never hard-code a color, size, or duration.
+   Change a value here and the whole site follows.
+
+   Naming: --{category}-{name}[-{variant}]
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* ---------------------------------------------------------------------------
+     COLOR
+     The interface is black, near-black, and off-white. The only color on the
+     site is supposed to come from the dogs. One accent exists for hairlines,
+     the active state, and small labels. It is never used on large surfaces.
+     ------------------------------------------------------------------------ */
+  --color-bg: #080808;               /* page ground ("iron black") */
+  --color-surface: #131416;          /* raised ground: footer, menus, admin cards */
+  --color-surface-raised: #1c1e21;   /* gunmetal: hover/pressed surfaces, inputs */
+  --color-fg: #f4f3f0;               /* primary text — a warm, not clinical, white */
+  --color-fg-muted: #a6a9ad;         /* secondary text (≥ 7:1 on --color-bg) */
+  --color-fg-subtle: #80848d;        /* tertiary: captions, disabled (≥ 4.5:1 on every surface) */
+  --color-line: rgba(244, 243, 240, 0.12);      /* hairlines */
+  --color-line-strong: rgba(244, 243, 240, 0.28); /* hairlines that must read on photography */
+  --color-accent: #c2612a;           /* oxidized amber: markers, lines, active indicator */
+  --color-accent-fg: #e07a3c;        /* amber tuned for TEXT (≥ 4.5:1 on --color-bg) */
+  --color-danger: #d64545;           /* ADMIN ONLY — destructive actions; never on the public site */
+
+  /* Scrims for text over photography. Gradients are allowed only here. */
+  --scrim-bottom: linear-gradient(to top, rgba(8, 8, 8, 0.82) 0%, rgba(8, 8, 8, 0.35) 45%, rgba(8, 8, 8, 0) 100%);
+  --scrim-top: linear-gradient(to bottom, rgba(8, 8, 8, 0.55) 0%, rgba(8, 8, 8, 0) 100%);
+
+  /* ---------------------------------------------------------------------------
+     TYPOGRAPHY — two families, set in src/app/fonts.ts via next/font/local
+     ------------------------------------------------------------------------ */
+  /* --font-display and --font-text are injected on <html> by next/font. */
+  --font-display-stack: var(--font-display), "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-text-stack: var(--font-text), system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  --text-xs: 0.75rem;     /* 12 */
+  --text-sm: 0.875rem;    /* 14 */
+  --text-base: 1rem;      /* 16 */
+  --text-lg: 1.125rem;    /* 18 */
+  --text-xl: 1.375rem;    /* 22 */
+  --text-2xl: 1.75rem;    /* 28 */
+  --text-3xl: 2.25rem;    /* 36 */
+  --text-4xl: 3rem;       /* 48 */
+  --text-5xl: 4rem;       /* 64 */
+  --text-hero: clamp(4.5rem, 10vw, 10rem); /* 72 → 160: the hero dog name */
+
+  --leading-tight: 1.05;  /* display */
+  --leading-snug: 1.25;   /* large text */
+  --leading-normal: 1.5;  /* body */
+
+  --tracking-display: -0.01em;
+  --tracking-label: 0.14em;   /* small-caps meta: "STUD · BLUE TRI" */
+  --tracking-button: 0.10em;
+
+  --weight-text: 400;
+  --weight-text-medium: 500;
+  --weight-text-semibold: 600;
+  --weight-display: 800;
+  --weight-display-heavy: 900;
+
+  /* ---------------------------------------------------------------------------
+     SPACING — 4px base. Only these steps exist.
+     ------------------------------------------------------------------------ */
+  --space-1: 0.25rem;   /* 4 */
+  --space-2: 0.5rem;    /* 8 */
+  --space-3: 0.75rem;   /* 12 */
+  --space-4: 1rem;      /* 16 */
+  --space-5: 1.5rem;    /* 24 */
+  --space-6: 2rem;      /* 32 */
+  --space-7: 3rem;      /* 48 */
+  --space-8: 4rem;      /* 64 */
+  --space-9: 6rem;      /* 96 */
+  --space-10: 8rem;     /* 128 */
+  --space-11: 10rem;    /* 160 */
+
+  --section-y: clamp(4rem, 10vw, 10rem);   /* identical top & bottom on every section */
+  --gutter: clamp(1rem, 4vw, 2.5rem);      /* page edge padding + grid gap */
+
+  /* ---------------------------------------------------------------------------
+     LAYOUT
+     Breakpoints cannot be custom properties in media queries; they are listed
+     here for reference and mirrored in src/styles/tokens.ts:
+       sm 640 · md 768 · lg 1024 · xl 1280 · 2xl 1600 · ultra 2200
+     ------------------------------------------------------------------------ */
+  --container-text: 72ch;    /* prose */
+  --container: 80rem;        /* 1280: standard content */
+  --container-wide: 100rem;  /* 1600: card grids, gallery */
+
+  --header-height: 4rem;             /* 64 at rest */
+  --header-height-compact: 3.25rem;  /* 52 once scrolled */
+
+  --touch-target: 3rem;  /* 48: minimum tap size on mobile */
+  --control-height: 3rem;          /* buttons + inputs */
+  --control-height-compact: 2.75rem; /* 44: desktop nav buttons */
+
+  /* ---------------------------------------------------------------------------
+     RADIUS + BORDERS — deliberately minimal. Hard edges are part of the identity.
+     ------------------------------------------------------------------------ */
+  --radius-none: 0;
+  --radius-sm: 2px;       /* inputs only */
+  --radius-pill: 999px;   /* admin chips only */
+
+  --border-hairline: 1px solid var(--color-line);
+  --border-strong: 1px solid var(--color-line-strong);
+  --border-accent: 1px solid var(--color-accent);
+
+  /* ---------------------------------------------------------------------------
+     MOTION — UI moves fast and rarely. Only the hero photography moves slowly.
+     ------------------------------------------------------------------------ */
+  --duration-fast: 150ms;    /* hover, focus */
+  --duration-base: 250ms;    /* reveals, filter changes, menu */
+  --duration-slow: 600ms;    /* gallery open/close */
+  --duration-hero: 1200ms;   /* hero crossfade */
+  --duration-hero-drift: 8000ms; /* hero scale 1.00 → 1.04 */
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);   /* the one curve for UI */
+  --ease-hero: cubic-bezier(0.4, 0, 0.2, 1);    /* carousel only */
+
+  /* ---------------------------------------------------------------------------
+     FOCUS + LAYERS
+     ------------------------------------------------------------------------ */
+  --focus-ring: 2px solid var(--color-fg);
+  --focus-offset: 2px;
+
+  --z-header: 10;
+  --z-menu: 20;
+  --z-lightbox: 30;
+  --z-toast: 40;
+}
