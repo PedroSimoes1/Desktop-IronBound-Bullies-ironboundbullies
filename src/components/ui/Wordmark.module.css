@@ -1,7 +1,7 @@
 .wordmark {
   display: inline-flex;
   align-items: baseline;
-  gap: 0.3em;
+  gap: 0.3em; /* the literal space between the spans collapses in a flex container; gap sets the real distance */
   font-family: var(--font-display-stack);
   text-transform: uppercase;
   letter-spacing: 0.02em;

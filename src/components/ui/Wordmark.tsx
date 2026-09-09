@@ -15,9 +15,11 @@ interface WordmarkProps {
 }
 
 export function Wordmark({ size = "header", linked = true, className }: WordmarkProps) {
+  // The literal space keeps the text content "Ironbound Bullies" for screen readers and
+  // for WCAG 2.5.3 (the accessible name must contain the visible label).
   const inner = (
     <>
-      <span className={styles.primary}>{site.wordmark.primary}</span>
+      <span className={styles.primary}>{site.wordmark.primary}</span>{" "}
       <span className={styles.secondary}>{site.wordmark.secondary}</span>
     </>
   );
