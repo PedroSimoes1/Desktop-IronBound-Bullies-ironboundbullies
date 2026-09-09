@@ -1,0 +1,76 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  color: var(--color-fg);
+}
+
+.frame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background-color: var(--color-surface);
+}
+
+.image {
+  object-fit: cover;
+  transform: scale(1);
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.card:hover .image,
+.card:focus-visible .image {
+  transform: scale(1.02);
+}
+
+.placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: var(--border-hairline);
+  color: var(--color-fg-subtle);
+}
+
+.body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-3);
+}
+
+.name {
+  color: var(--color-fg);
+}
+
+.meta {
+  color: var(--color-fg-muted);
+}
+
+.status {
+  margin-top: var(--space-1);
+}
+
+/* Amber hairline that draws in on hover — the card's only "lift". */
+.rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.card:hover .rule,
+.card:focus-visible .rule {
+  transform: scaleX(1);
+}
+
+.card:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--space-2);
+}

@@ -1,0 +1,22 @@
+.section {
+  padding-block: var(--section-y);
+}
+
+.rule {
+  border-top: var(--border-hairline);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-7);
+}
+
+.eyebrow {
+  color: var(--color-accent-fg);
+}
+
+.lede {
+  margin-top: var(--space-2);
+}

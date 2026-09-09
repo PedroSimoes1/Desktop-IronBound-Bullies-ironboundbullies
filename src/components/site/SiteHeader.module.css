@@ -1,0 +1,207 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  background-color: var(--color-bg);
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+/* Over a hero: transparent until the page scrolls. */
+.overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  background-color: transparent;
+}
+
+.solid {
+  background-color: rgba(8, 8, 8, 0.88);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom-color: var(--color-line);
+}
+
+/*
+ * While the menu is open the header must be fully opaque and must NOT use
+ * backdrop-filter: a filter on an ancestor turns it into the containing block
+ * for position: fixed descendants, which would pin the full-screen menu inside
+ * the 64px header instead of the viewport.
+ */
+.menuOpen {
+  background-color: var(--color-bg);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  height: var(--header-height);
+  max-width: calc(var(--container-wide) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  transition: height var(--duration-base) var(--ease-out);
+}
+
+.compact .bar {
+  height: var(--header-height-compact);
+}
+
+.wordmark {
+  flex: none;
+}
+
+.desktopNav {
+  display: none;
+}
+
+.navList {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.navLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-height-compact);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-text-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.navLink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  height: 1px;
+  background-color: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.navLink:hover,
+.navLink[aria-current="page"] {
+  color: var(--color-fg);
+}
+
+.navLink:hover::after,
+.navLink[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.cta {
+  display: none;
+}
+
+/* Menu button: two hairlines that become an X. */
+.menuButton {
+  display: inline-grid;
+  place-items: center;
+  width: var(--touch-target);
+  height: var(--touch-target);
+  margin-right: calc(var(--space-3) * -1);
+}
+
+.menuIcon,
+.menuIcon::before,
+.menuIcon::after {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background-color: var(--color-fg);
+  transition: transform var(--duration-base) var(--ease-out), opacity var(--duration-fast) var(--ease-out);
+}
+
+.menuIcon {
+  position: relative;
+  background-color: transparent;
+}
+
+.menuIcon::before,
+.menuIcon::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+
+.menuIcon::before {
+  transform: translateY(-4px);
+}
+
+.menuIcon::after {
+  transform: translateY(4px);
+}
+
+.menuButton[aria-expanded="true"] .menuIcon::before {
+  transform: rotate(45deg);
+}
+
+.menuButton[aria-expanded="true"] .menuIcon::after {
+  transform: rotate(-45deg);
+}
+
+/* Full-screen mobile menu */
+.menu {
+  position: fixed;
+  inset: var(--header-height) 0 0 0;
+  z-index: var(--z-menu);
+  background-color: var(--color-bg);
+  padding: var(--space-7) var(--gutter);
+  overflow-y: auto;
+}
+
+.compact .menu {
+  top: var(--header-height-compact);
+}
+
+.menuList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.menuLink {
+  display: block;
+  padding-block: var(--space-3);
+  color: var(--color-fg-muted);
+  border-bottom: var(--border-hairline);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.menuLink:hover,
+.menuLink[aria-current="page"] {
+  color: var(--color-fg);
+}
+
+@media (min-width: 1024px) {
+  .desktopNav {
+    display: block;
+  }
+
+  .cta {
+    display: inline-flex;
+  }
+
+  .menuButton,
+  .menu {
+    display: none;
+  }
+}

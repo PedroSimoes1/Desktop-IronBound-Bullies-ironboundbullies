@@ -1,0 +1,38 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.label {
+  color: var(--color-fg-muted);
+}
+
+.required {
+  color: var(--color-accent-fg);
+}
+
+.optional {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: var(--weight-text);
+  color: var(--color-fg-subtle);
+}
+
+.hint {
+  color: var(--color-fg-subtle);
+}
+
+.error {
+  color: var(--color-fg);
+}
+
+.error::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: var(--space-2);
+  vertical-align: 2px;
+  background-color: var(--color-danger);
+}

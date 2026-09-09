@@ -1,0 +1,118 @@
+.button {
+  --_bg: transparent;
+  --_fg: var(--color-fg);
+  --_border: transparent;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--control-height);
+  padding: 0 var(--space-5);
+  border: 1px solid var(--_border);
+  border-radius: var(--radius-none);
+  background-color: var(--_bg);
+  color: var(--_fg);
+  font-family: var(--font-text-stack);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-text-semibold);
+  letter-spacing: var(--tracking-button);
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.label {
+  /* Optical nudge: uppercase text sits a hair high; this recentres it. */
+  transform: translateY(0.5px);
+}
+
+/* PRIMARY — filled. Hover inverts. */
+.primary {
+  --_bg: var(--color-fg);
+  --_fg: var(--color-bg);
+  --_border: var(--color-fg);
+}
+
+.primary:hover,
+.primary:focus-visible {
+  --_bg: var(--color-bg);
+  --_fg: var(--color-fg);
+}
+
+/* SECONDARY — outlined. Hover fills. */
+.secondary {
+  --_bg: transparent;
+  --_fg: var(--color-fg);
+  --_border: var(--color-fg);
+}
+
+.secondary:hover,
+.secondary:focus-visible {
+  --_bg: var(--color-fg);
+  --_fg: var(--color-bg);
+}
+
+/* TEXT — underline draws in from the left. */
+.text {
+  min-height: var(--touch-target);
+  padding: 0;
+  border: 0;
+}
+
+.text .label {
+  position: relative;
+  padding-bottom: 2px;
+}
+
+.text .label::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: currentColor;
+  transform: scaleX(0.35);
+  transform-origin: left center;
+  transition: transform var(--duration-base) var(--ease-out), background-color var(--duration-fast) var(--ease-out);
+}
+
+.text:hover .label::after,
+.text:focus-visible .label::after {
+  transform: scaleX(1);
+  background-color: var(--color-accent);
+}
+
+.compact {
+  min-height: var(--control-height-compact);
+  padding: 0 var(--space-4);
+  font-size: var(--text-xs);
+}
+
+.fullWidth {
+  display: flex;
+  width: 100%;
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.button:disabled:hover {
+  --_bg: var(--color-fg);
+  --_fg: var(--color-bg);
+}
+
+.secondary:disabled:hover,
+.text:disabled:hover {
+  --_bg: transparent;
+  --_fg: var(--color-fg);
+}
