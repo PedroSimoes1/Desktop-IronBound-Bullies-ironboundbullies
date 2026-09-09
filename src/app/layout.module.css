@@ -1,0 +1,24 @@
+.main {
+  min-height: 60dvh;
+}
+
+/* Keyboard users: first Tab press reveals a link straight to the content. */
+.skipLink {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: calc(var(--z-toast) + 1);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-text-semibold);
+  letter-spacing: var(--tracking-button);
+  text-transform: uppercase;
+  transform: translateY(-200%);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.skipLink:focus-visible {
+  transform: translateY(0);
+}

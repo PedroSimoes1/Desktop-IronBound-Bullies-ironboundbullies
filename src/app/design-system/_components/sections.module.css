@@ -1,0 +1,214 @@
+/* Shared styles for the design-system specimens. */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+  margin-bottom: var(--space-8);
+}
+
+.specimen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-bottom: var(--space-5);
+  border-bottom: var(--border-hairline);
+  overflow-wrap: anywhere;
+}
+
+.subheading {
+  margin-bottom: var(--space-4);
+}
+
+.footnote {
+  margin-top: var(--space-6);
+  max-width: var(--container-text);
+}
+
+.code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: var(--text-sm);
+  color: var(--color-fg);
+}
+
+/* Color */
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: var(--space-6) var(--gutter);
+}
+
+.swatch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.swatchChip {
+  aspect-ratio: 3 / 2;
+  border: var(--border-hairline);
+  margin-bottom: var(--space-2);
+}
+
+.contrast {
+  color: var(--color-accent-fg);
+}
+
+/* Buttons */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.narrow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 24rem;
+}
+
+/* Status */
+.split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-7) var(--gutter);
+}
+
+.statusList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Forms */
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5) var(--gutter);
+  max-width: var(--container);
+}
+
+.formFull {
+  grid-column: 1 / -1;
+}
+
+/* Cards */
+.cardGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-7) var(--gutter);
+}
+
+/* Spacing */
+.spacingList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-8);
+}
+
+.spacingRow {
+  display: grid;
+  grid-template-columns: 7rem 1fr 4rem;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 1.75rem;
+}
+
+.spacingBar {
+  display: block;
+  height: 8px;
+  background-color: var(--color-accent);
+  max-width: 100%;
+}
+
+/* Tables */
+.tableWrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  min-width: 36rem;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.table th,
+.table td {
+  padding: var(--space-3) var(--space-4) var(--space-3) 0;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: var(--border-hairline);
+}
+
+.table thead th {
+  color: var(--color-fg-subtle);
+  font-weight: var(--weight-text-semibold);
+}
+
+.table tbody th {
+  font-weight: var(--weight-text);
+}
+
+/* Motion demo */
+.motionDemo {
+  margin-top: var(--space-6);
+}
+
+.motionCard {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border: var(--border-hairline);
+  transform: translateY(0);
+  transition: transform var(--duration-base) var(--ease-out), border-color var(--duration-base) var(--ease-out);
+}
+
+.motionCard::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background-color: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.motionCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-line-strong);
+}
+
+.motionCard:hover::after {
+  transform: scaleX(1);
+}
+
+@media (min-width: 640px) {
+  .split {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cardGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cardGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

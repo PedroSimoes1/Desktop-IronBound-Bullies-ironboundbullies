@@ -1,0 +1,22 @@
+.notFound {
+  display: flex;
+  align-items: center;
+  min-height: calc(100dvh - var(--header-height));
+  padding-block: var(--section-y);
+}
+
+.eyebrow {
+  color: var(--color-accent-fg);
+  margin-bottom: var(--space-3);
+}
+
+.lede {
+  margin-top: var(--space-4);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}

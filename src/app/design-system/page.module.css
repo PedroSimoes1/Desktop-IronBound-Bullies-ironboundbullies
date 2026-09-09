@@ -1,0 +1,39 @@
+.hero {
+  padding-block: var(--section-y) var(--space-8);
+}
+
+.hero h1 {
+  margin-top: var(--space-3);
+}
+
+.eyebrow {
+  color: var(--color-accent-fg);
+}
+
+.lede {
+  margin-top: var(--space-5);
+}
+
+.toc {
+  margin-top: var(--space-7);
+  overflow-x: auto;
+}
+
+.tocList {
+  display: flex;
+  gap: var(--space-5);
+  white-space: nowrap;
+  padding-bottom: var(--space-2);
+}
+
+.tocLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  color: var(--color-fg-muted);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.tocLink:hover {
+  color: var(--color-fg);
+}
