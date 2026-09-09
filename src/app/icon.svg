@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Placeholder favicon until the owner's logo is supplied (audit item V12): iron black, one amber marker. -->
+  <rect width="32" height="32" fill="#080808"/>
+  <rect x="7" y="7" width="4" height="18" fill="#f4f3f0"/>
+  <rect x="14" y="7" width="11" height="4" fill="#f4f3f0"/>
+  <rect x="14" y="14" width="8" height="4" fill="#f4f3f0"/>
+  <rect x="14" y="21" width="11" height="4" fill="#f4f3f0"/>
+  <rect x="21" y="21" width="4" height="4" fill="#c2612a"/>
+</svg>
