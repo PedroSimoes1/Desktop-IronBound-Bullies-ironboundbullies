@@ -1,7 +1,7 @@
 import localFont from "next/font/local";
 
 /**
- * The two — and only two — type families on the site.
+ * The two (and only two) type families on the site.
  *
  * Both are variable fonts (one file covers every weight), self-hosted from
  * src/fonts and served from our own domain. They are rebuilt with
@@ -11,7 +11,7 @@ import localFont from "next/font/local";
  * src/styles/tokens.css.
  */
 
-/** Big Shoulders Display — dog names, page titles. Heavy, condensed, industrial. */
+/** Big Shoulders Display: dog names, page titles. Heavy, condensed, industrial. */
 export const displayFont = localFont({
   src: "../fonts/big-shoulders-display-variable.woff2",
   weight: "100 900",
@@ -23,22 +23,27 @@ export const displayFont = localFont({
   preload: true,
 });
 
-/** Hanken Grotesk — body, labels, UI. Quiet and readable at every size. */
+/** Hanken Grotesk, body, labels, UI. Quiet and readable at every size. */
 export const textFont = localFont({
-  src: [
-    {
-      path: "../fonts/hanken-grotesk-variable.woff2",
-      weight: "100 900",
-      style: "normal",
-    },
-    {
-      path: "../fonts/hanken-grotesk-italic-variable.woff2",
-      weight: "100 900",
-      style: "italic",
-    },
-  ],
+  src: "../fonts/hanken-grotesk-variable.woff2",
+  weight: "100 900",
+  style: "normal",
   display: "swap",
   variable: "--font-text",
   adjustFontFallback: "Arial",
   preload: true,
+});
+
+/**
+ * The italic is a separate face so it is NOT preloaded: nothing on the public
+ * site is italic yet, and every first-paint kilobyte belongs to the photographs.
+ * It still shares the --font-text family name, so `font-style: italic` just works.
+ */
+export const textFontItalic = localFont({
+  src: "../fonts/hanken-grotesk-italic-variable.woff2",
+  weight: "100 900",
+  style: "italic",
+  display: "swap",
+  variable: "--font-text-italic",
+  preload: false,
 });

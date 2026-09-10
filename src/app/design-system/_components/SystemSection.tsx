@@ -7,7 +7,7 @@ export function SpacingSection() {
   return (
     <Section
       id="spacing"
-      eyebrow="07 — Spacing & layout"
+      eyebrow="Spacing & layout"
       title="One rhythm, one grid"
       lede="A 4px base with eleven steps. Every section uses the same top and bottom padding; every container shares the same gutter, so headlines, cards, and footer columns sit on one left edge."
       rule
@@ -30,9 +30,9 @@ export function MotionSection() {
   return (
     <Section
       id="motion"
-      eyebrow="08 — Motion"
+      eyebrow="Motion"
       title="The dogs move. The interface doesn’t."
-      lede="Interface transitions run 150–250ms on a single easing curve. Only the hero photography is allowed to be slow. When a visitor's system asks for reduced motion, the hero cuts instead of drifting and nothing animates on scroll."
+      lede="Interface transitions run 150 to 250ms on a single easing curve. Only the hero photography is allowed to be slow. When a visitor's system asks for reduced motion, the hero cuts instead of drifting and nothing animates on scroll."
       rule
     >
       <SpecimenTable caption="Motion tokens" headers={["Token", "Value", "Use"]} rows={motionSpecimens} />

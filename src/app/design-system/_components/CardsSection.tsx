@@ -7,9 +7,9 @@ export function CardsSection() {
   return (
     <Section
       id="cards"
-      eyebrow="06 — Cards"
+      eyebrow="Cards"
       title="Photography first"
-      lede="A 4:5 photograph, the name in display type, one line of meta, the status. No box, no shadow — on hover the image scales 2% and an amber hairline draws in. Photographs are placeholders until the image inventory assigns them."
+      lede="A 4:5 photograph, the name in display type, one line of meta, the status. No box, no shadow. On hover the image scales 2% and an amber hairline draws in. Photographs are placeholders until the image inventory assigns them."
       width="wide"
       rule
     >

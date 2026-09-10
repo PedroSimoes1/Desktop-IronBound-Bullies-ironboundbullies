@@ -7,7 +7,7 @@ export function TypeSection() {
   return (
     <Section
       id="typography"
-      eyebrow="02 — Typography"
+      eyebrow="Typography"
       title="Two families. The name is the loudest thing on the page."
       lede="Big Shoulders Display for dog names and titles: heavy, condensed, uppercase. Hanken Grotesk for everything a person reads. Both are self-hosted variable fonts, so every weight costs nothing extra."
       rule
@@ -15,7 +15,7 @@ export function TypeSection() {
       <div className={styles.stack}>
         <figure className={styles.specimen}>
           <p className="display-hero">Voodoo</p>
-          <figcaption className={["label", "subtle"].join(" ")}>display-hero · Big Shoulders Display 900 · fluid 72–160px</figcaption>
+          <figcaption className={["label", "subtle"].join(" ")}>display-hero, Big Shoulders Display 900, fluid 72 to 160px</figcaption>
         </figure>
 
         <figure className={styles.specimen}>
@@ -34,7 +34,7 @@ export function TypeSection() {
         </figure>
 
         <figure className={styles.specimen}>
-          <p className="label">Stud · Blue Tri · Exotic Bully</p>
+          <p className="label">Stud · Blue Tri</p>
           <figcaption className={["label", "subtle"].join(" ")}>label · small-caps meta, 0.14em tracking</figcaption>
         </figure>
 
