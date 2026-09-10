@@ -52,8 +52,10 @@ export interface Dog {
   /** URL segment: /dogs/voodoo */
   slug: string;
   name: string;
-  sex: Sex;
-  role: DogRole;
+  /** Unknown until the owner confirms it (e.g. a dog that appears only in photographs). */
+  sex?: Sex;
+  /** Unknown until confirmed; a dog without a role appears only under "All dogs". */
+  role?: DogRole;
   status?: DogStatus;
 
   /** e.g. "Exotic Bully" — wording confirmed by the owner, never assumed. */

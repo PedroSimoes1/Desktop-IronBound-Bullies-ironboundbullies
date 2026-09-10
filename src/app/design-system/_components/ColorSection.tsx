@@ -9,9 +9,9 @@ export function ColorSection() {
   return (
     <Section
       id="color"
-      eyebrow="01 — Color"
+      eyebrow="Color"
       title="Two colors do the work"
-      lede="Black, near-black, and a warm off-white. The dogs supply the color. One amber accent for markers, hairlines, and the active state — never for surfaces. Contrast is computed against the page ground, not assumed."
+      lede="Black, near-black, and a warm off-white. The dogs supply the color. One amber accent for markers, hairlines, and the active state, never for surfaces. Contrast is computed against the page ground, not assumed."
       rule
     >
       <ul role="list" className={styles.swatches}>

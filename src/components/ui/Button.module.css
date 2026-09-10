@@ -25,7 +25,13 @@
   transition:
     background-color var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out);
+    border-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+/* Press feedback: a physical push. */
+.button:active:not(:disabled) {
+  transform: scale(0.985);
 }
 
 .label {
@@ -33,7 +39,7 @@
   transform: translateY(0.5px);
 }
 
-/* PRIMARY — filled. Hover inverts. */
+/* PRIMARY: filled. Hover inverts. */
 .primary {
   --_bg: var(--color-fg);
   --_fg: var(--color-bg);
@@ -46,7 +52,7 @@
   --_fg: var(--color-fg);
 }
 
-/* SECONDARY — outlined. Hover fills. */
+/* SECONDARY: outlined. Hover fills. */
 .secondary {
   --_bg: transparent;
   --_fg: var(--color-fg);
@@ -59,7 +65,7 @@
   --_fg: var(--color-bg);
 }
 
-/* TEXT — underline draws in from the left. */
+/* TEXT: underline draws in from the left. */
 .text {
   min-height: var(--touch-target);
   padding: 0;
@@ -78,15 +84,12 @@
   right: 0;
   bottom: 0;
   height: 1px;
-  background-color: currentColor;
-  transform: scaleX(0.35);
-  transform-origin: left center;
-  transition: transform var(--duration-base) var(--ease-out), background-color var(--duration-fast) var(--ease-out);
+  background-color: var(--color-line-strong);
+  transition: background-color var(--duration-fast) var(--ease-out);
 }
 
 .text:hover .label::after,
 .text:focus-visible .label::after {
-  transform: scaleX(1);
   background-color: var(--color-accent);
 }
 

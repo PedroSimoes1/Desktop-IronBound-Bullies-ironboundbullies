@@ -3,11 +3,22 @@
   flex-direction: column;
   gap: var(--space-4);
   color: var(--color-fg);
+  transform: scale(1);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+/* Press feedback: a physical push, nothing more. */
+.card:active {
+  transform: scale(0.985);
+}
+
+.large {
+  gap: var(--space-5);
 }
 
 .frame {
   position: relative;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   background-color: var(--color-surface);
 }

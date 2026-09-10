@@ -1,3 +1,13 @@
+/* A zero-height marker at the top of the page; when it scrolls out of view the header compacts. */
+.sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
 .header {
   position: sticky;
   top: 0;
@@ -9,31 +19,11 @@
     border-color var(--duration-base) var(--ease-out);
 }
 
-/* Over a hero: transparent until the page scrolls. */
-.overlay {
-  position: fixed;
-  left: 0;
-  right: 0;
-  background-color: transparent;
-}
-
 .solid {
   background-color: rgba(8, 8, 8, 0.88);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border-bottom-color: var(--color-line);
-}
-
-/*
- * While the menu is open the header must be fully opaque and must NOT use
- * backdrop-filter: a filter on an ancestor turns it into the containing block
- * for position: fixed descendants, which would pin the full-screen menu inside
- * the 64px header instead of the viewport.
- */
-.menuOpen {
-  background-color: var(--color-bg);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
 }
 
 .bar {
@@ -75,6 +65,7 @@
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--color-fg-muted);
+  white-space: nowrap;
   transition: color var(--duration-fast) var(--ease-out);
 }
 
@@ -111,13 +102,18 @@
   display: none;
 }
 
-/* Menu button: two hairlines that become an X. */
+/* Menu button: two hairlines; the close variant is an X. */
 .menuButton {
   display: inline-grid;
   place-items: center;
   width: var(--touch-target);
   height: var(--touch-target);
   margin-right: calc(var(--space-3) * -1);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.menuButton:active {
+  transform: scale(0.94);
 }
 
 .menuIcon,
@@ -127,7 +123,6 @@
   width: 22px;
   height: 1.5px;
   background-color: var(--color-fg);
-  transition: transform var(--duration-base) var(--ease-out), opacity var(--duration-fast) var(--ease-out);
 }
 
 .menuIcon {
@@ -150,26 +145,49 @@
   transform: translateY(4px);
 }
 
-.menuButton[aria-expanded="true"] .menuIcon::before {
+.menuIconClose::before {
   transform: rotate(45deg);
 }
 
-.menuButton[aria-expanded="true"] .menuIcon::after {
+.menuIconClose::after {
   transform: rotate(-45deg);
 }
 
-/* Full-screen mobile menu */
+/* Full-screen mobile menu: a native <dialog> in the top layer. */
 .menu {
   position: fixed;
-  inset: var(--header-height) 0 0 0;
-  z-index: var(--z-menu);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
   background-color: var(--color-bg);
-  padding: var(--space-7) var(--gutter);
+  color: var(--color-fg);
   overflow-y: auto;
 }
 
-.compact .menu {
-  top: var(--header-height-compact);
+.menu::backdrop {
+  background-color: transparent;
+}
+
+.menu[open] {
+  animation: menuIn var(--duration-base) var(--ease-out);
+}
+
+@keyframes menuIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.menuNav {
+  padding: var(--space-7) var(--gutter);
 }
 
 .menuList {
@@ -200,8 +218,7 @@
     display: inline-flex;
   }
 
-  .menuButton,
-  .menu {
+  .menuButton {
     display: none;
   }
 }

@@ -2,139 +2,142 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Wordmark } from "@/components/ui/Wordmark";
-import { headerCta, primaryNavigation } from "@/lib/navigation";
+import { headerCta, isCurrent, primaryNavigation } from "@/lib/navigation";
 import styles from "./SiteHeader.module.css";
 
 /**
- * Site header (brief sections 44–45).
+ * Site header (brief sections 44 and 45).
  *
- * Desktop: wordmark left, links right, one CTA. Transparent over a hero;
- * becomes a compact charcoal bar with a hairline once the page scrolls.
- * Mobile: wordmark + menu button; the menu is a full-screen list with
- * large tap targets. Escape closes it, focus returns to the button, and the
- * page behind it does not scroll.
+ * Desktop: wordmark left, links right, one CTA. Compacts into a blurred bar
+ * once the page scrolls (detected with an IntersectionObserver sentinel, no
+ * scroll listener).
+ *
+ * Mobile: the menu is a native <dialog> opened with showModal(), which gives
+ * focus trapping, Escape-to-close, an inert page behind it, and focus
+ * returning to the button that opened it, all from the browser. The dialog
+ * draws its own top bar so the wordmark and the close control stay exactly
+ * where the header's are.
  */
 
-interface SiteHeaderProps {
-  /** Start transparent (the page has a full-bleed hero under the header). */
-  overlay?: boolean;
+const SCROLL_THRESHOLD_PX = 24;
+
+function useScrolled(sentinelRef: React.RefObject<HTMLDivElement | null>): boolean {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(([entry]) => setScrolled(!entry.isIntersecting), {
+      rootMargin: `-${SCROLL_THRESHOLD_PX}px 0px 0px 0px`,
+      threshold: 0,
+    });
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [sentinelRef]);
+  return scrolled;
 }
 
-const SCROLL_THRESHOLD = 24;
-
-function subscribeToScroll(onChange: () => void) {
-  window.addEventListener("scroll", onChange, { passive: true });
-  return () => window.removeEventListener("scroll", onChange);
-}
-
-/** True once the page has scrolled past the threshold. Server-rendered as false. */
-function useScrolled(): boolean {
-  return useSyncExternalStore(
-    subscribeToScroll,
-    () => window.scrollY > SCROLL_THRESHOLD,
-    () => false,
-  );
-}
-
-export function SiteHeader({ overlay = false }: SiteHeaderProps) {
+export function SiteHeader() {
   const pathname = usePathname();
-  const scrolled = useScrolled();
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const scrolled = useScrolled(sentinelRef);
 
-  // The menu remembers which page it was opened on, so navigating closes it
-  // without an effect: a new pathname simply no longer matches.
+  // The menu remembers which page it was opened on: navigating closes it without an effect.
   const [openedAt, setOpenedAt] = useState<string | null>(null);
   const menuOpen = openedAt === pathname;
+  const openMenu = () => setOpenedAt(pathname);
   const closeMenu = () => setOpenedAt(null);
-  const toggleMenu = () => setOpenedAt(menuOpen ? null : pathname);
 
-  // Lock page scroll and handle Escape while the menu is open.
+  // Keep the native dialog in step with React state, and lock page scroll while it is open.
   useEffect(() => {
-    if (!menuOpen) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        closeMenu();
-        menuButtonRef.current?.focus();
-      }
-    };
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", onKey);
-    };
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (menuOpen && !dialog.open) {
+      dialog.showModal();
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = previousOverflow;
+        if (dialog.open) dialog.close();
+      };
+    }
   }, [menuOpen]);
 
-  const headerClass = [
-    styles.header,
-    overlay ? styles.overlay : "",
-    scrolled || menuOpen ? styles.solid : "",
-    menuOpen ? styles.menuOpen : "",
-    scrolled ? styles.compact : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const headerClass = [styles.header, scrolled ? styles.solid : "", scrolled ? styles.compact : ""].filter(Boolean).join(" ");
 
   return (
-    <header className={headerClass}>
-      <div className={styles.bar}>
-        <Wordmark size="header" className={styles.wordmark} />
+    <>
+      <div ref={sentinelRef} className={styles.sentinel} aria-hidden="true" />
+      <header className={headerClass}>
+        <div className={styles.bar}>
+          <Wordmark size="header" className={styles.wordmark} />
 
-        <nav className={styles.desktopNav} aria-label="Primary">
-          <ul role="list" className={styles.navList}>
-            {primaryNavigation.map((item) => {
-              const current = pathname === item.href;
-              return (
+          <nav className={styles.desktopNav} aria-label="Primary">
+            <ul role="list" className={styles.navList}>
+              {primaryNavigation.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className={styles.navLink} aria-current={current ? "page" : undefined}>
+                  <Link href={item.href} className={styles.navLink} aria-current={isCurrent(pathname, item) ? "page" : undefined}>
                     {item.label}
                   </Link>
                 </li>
-              );
-            })}
-          </ul>
-        </nav>
+              ))}
+            </ul>
+          </nav>
 
-        <div className={styles.actions}>
-          <Button href={headerCta.href} variant="secondary" size="compact" className={styles.cta}>
-            {headerCta.label}
-          </Button>
-          <button
-            ref={menuButtonRef}
-            type="button"
-            className={styles.menuButton}
-            aria-expanded={menuOpen}
-            aria-controls="site-menu"
-            onClick={toggleMenu}
-          >
-            <span className={styles.menuIcon} aria-hidden="true" />
-            <span className="sr-only">{menuOpen ? "Close menu" : "Open menu"}</span>
+          <div className={styles.actions}>
+            <Button href={headerCta.href} variant="secondary" size="compact" className={styles.cta}>
+              {headerCta.label}
+            </Button>
+            <button type="button" className={styles.menuButton} aria-expanded={menuOpen} aria-haspopup="dialog" onClick={openMenu}>
+              <span className={styles.menuIcon} aria-hidden="true" />
+              <span className="sr-only">Open menu</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <dialog
+        ref={dialogRef}
+        className={styles.menu}
+        aria-label="Menu"
+        onClose={closeMenu}
+        onCancel={(event) => {
+          event.preventDefault();
+          closeMenu();
+        }}
+      >
+        <div className={styles.bar}>
+          <Wordmark size="header" className={styles.wordmark} />
+          <button type="button" className={styles.menuButton} onClick={closeMenu}>
+            <span className={[styles.menuIcon, styles.menuIconClose].join(" ")} aria-hidden="true" />
+            <span className="sr-only">Close menu</span>
           </button>
         </div>
-      </div>
-
-      <div id="site-menu" className={styles.menu} hidden={!menuOpen} role="dialog" aria-modal="true" aria-label="Menu">
-        <nav aria-label="Primary (mobile)">
+        <nav aria-label="Primary" className={styles.menuNav}>
           <ul role="list" className={styles.menuList}>
             {primaryNavigation.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
                   className={["display-1", styles.menuLink].join(" ")}
-                  aria-current={pathname === item.href ? "page" : undefined}
+                  aria-current={isCurrent(pathname, item) ? "page" : undefined}
                   onClick={closeMenu}
                 >
                   {item.label}
                 </Link>
               </li>
             ))}
+            <li>
+              <Link href={headerCta.href} className={["display-1", styles.menuLink].join(" ")} onClick={closeMenu}>
+                {headerCta.label}
+              </Link>
+            </li>
           </ul>
         </nav>
-      </div>
-    </header>
+      </dialog>
+    </>
   );
 }

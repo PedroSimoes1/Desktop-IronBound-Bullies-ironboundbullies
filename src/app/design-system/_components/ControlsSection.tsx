@@ -14,7 +14,7 @@ export function ButtonsSection() {
   return (
     <Section
       id="buttons"
-      eyebrow="03 — Buttons & links"
+      eyebrow="Buttons & links"
       title="Three buttons, and only three"
       lede="A filled primary, an outlined secondary, and a text link that draws its underline. Never two primaries in one view. Hover inverts; nothing glows."
       rule
@@ -33,7 +33,7 @@ export function ButtonsSection() {
       </div>
       <div className={styles.narrow}>
         <Button fullWidth>Send inquiry</Button>
-        <p className={["body-sm", "subtle"].join(" ")}>Full-width variant — forms on phones.</p>
+        <p className={["body-sm", "subtle"].join(" ")}>Full-width variant, for forms on phones.</p>
       </div>
     </Section>
   );
@@ -43,9 +43,9 @@ export function StatusSection() {
   return (
     <Section
       id="status"
-      eyebrow="04 — Status"
+      eyebrow="Status"
       title="A word, not a badge"
-      lede="Small-caps text with a 6px square marker. Amber marks a live opportunity; everything else is quiet. Sold is struck through on the price, not shouted in red. Specimen only — not live data."
+      lede="Small-caps text with a 6px square marker. Amber marks a live opportunity; everything else is quiet. Sold is struck through on the price, not shouted in red. Specimen only, not live data."
       rule
     >
       <div className={styles.split}>
@@ -78,7 +78,7 @@ export function FormsSection() {
   return (
     <Section
       id="forms"
-      eyebrow="05 — Forms"
+      eyebrow="Forms"
       title="Native controls, visible labels"
       lede="48px tall, 16px text so iPhones don’t zoom, labels always visible, errors announced. One column on phones, two at most on desktop. This is the inquiry form's vocabulary."
       rule

@@ -9,7 +9,7 @@ import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Design system",
-  description: "Living style sheet for Ironbound Bullies 2.0 — Concept B, Iron.",
+  description: "Living style sheet for Ironbound Bullies 2.0: Concept B, Iron.",
   // Internal reference page: never indexed, in any environment.
   robots: { index: false, follow: false },
 };
@@ -37,7 +37,7 @@ export default function DesignSystemPage() {
           <p className={["label", styles.eyebrow].join(" ")}>Ironbound Bullies 2.0 · Stage 1</p>
           <h1 className="display-1">Design system</h1>
           <p className={["lede", styles.lede].join(" ")}>
-            Concept B — “Iron”. Black ground, heavy condensed type, one amber accent, and an interface that stays out of
+            Concept B, “Iron”. Black ground, heavy condensed type, one amber accent, and an interface that stays out of
             the photography’s way. Everything below is built from the same tokens the site uses.
           </p>
           <nav aria-label="On this page" className={styles.toc}>

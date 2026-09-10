@@ -29,7 +29,7 @@ export function Wordmark({ size = "header", linked = true, className }: Wordmark
     return <span className={cls}>{inner}</span>;
   }
   return (
-    <Link href="/" className={cls} aria-label={`${site.name} — home`}>
+    <Link href="/" className={cls} aria-label={`${site.name}, home`}>
       {inner}
     </Link>
   );

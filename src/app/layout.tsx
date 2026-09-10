@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { displayFont, textFont } from "./fonts";
+import { displayFont, textFont, textFontItalic } from "./fonts";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { isProduction, site } from "@/lib/site";
@@ -31,7 +31,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${displayFont.variable} ${textFont.variable}`}>
+    <html lang="en" className={`${displayFont.variable} ${textFont.variable} ${textFontItalic.variable}`}>
       <body>
         <a href="#main" className={styles.skipLink}>
           Skip to content

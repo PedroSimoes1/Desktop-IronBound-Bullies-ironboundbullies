@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "fonts": "python3 tools/fonts/build_fonts.py"
+    "fonts": "python3 tools/fonts/build_fonts.py",
+    "lint:copy": "node scripts/check-copy.mjs",
+    "photos": "python3 tools/photos/prepare_photos.py"
   },
   "dependencies": {
     "next": "16.3.4",
