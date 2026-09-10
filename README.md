@@ -9,10 +9,10 @@ This README is written so that someone can return months from now and understand
 | Stage | What it delivers | State |
 |---|---|---|
 | 0 | Audit, design directions, sitemap, architecture, admin plan, domain/deploy plan (see the project documents) | Done |
-| **1** | **Project foundation: tokens, fonts, core components, living style sheet, 404/error pages** | **Done — this is what you are looking at** |
-| 2 | Photo inventory and focal points → cinematic homepage hero | Next |
-| 3 | Dog collection + profile pages, breedings, productions, available | Planned |
-| 4 | Inquiry form (spam-protected) and owner inbox | Planned |
+| 1 | Project foundation: tokens, fonts, core components, living style sheet, 404/error pages | Done |
+| **2** | **Photo inventory and focal points, cinematic homepage hero, featured dogs, dog collection and profiles, available page, inquiry form preview** (branch `taste-skill-test`) | **Done, awaiting owner review** |
+| 3 | Breedings, productions, gallery, about | Next |
+| 4 | Inquiry form delivery (validation, spam protection) and owner inbox | Planned |
 | 5 | Database + owner dashboard (/admin), photo upload pipeline | Planned |
 | 6 | SEO (sitemap, structured data, OG images), analytics, legal pages | Planned |
 | 7 | QA on real devices, domain, launch | Planned |
@@ -25,16 +25,22 @@ One Next.js application does everything: it renders the public pages, it will ho
 src/
   app/                 routes (Next.js App Router). Each folder is a URL.
     layout.tsx         the shell every page shares: fonts, header, footer, metadata defaults
-    page.tsx           "/"  — stage-1 landing page (the cinematic hero replaces it in Stage 2)
+    page.tsx           "/"  — homepage: hero, featured dogs, about, inquiry band
+    dogs/              "/dogs", "/dogs/studs", "/dogs/females", "/dogs/[slug]" profiles
+    available/         "/available" (honest empty state until dogs are verified)
+    contact/           "/contact" inquiry form (preview; delivery arrives in Stage 4)
     design-system/     "/design-system" — the living style sheet (never indexed)
     not-found.tsx      404 page · error.tsx — application error page
     fonts.ts           the two type families, loaded with next/font/local
   components/
     ui/                building blocks: Button, StatusLabel, Container, Section, Wordmark, form/
-    dogs/              DogCard (more dog components arrive in Stage 3)
-    site/              SiteHeader, SiteFooter
+    dogs/              DogCard, DogCollection
+    home/              Hero (carousel), FeaturedDogs, HomeSections
+    site/              SiteHeader (native <dialog> menu), SiteFooter
+  content/             dogs.ts, photos.ts — the typed records the site renders (database later)
+  photos/              web masters of the owner's photographs (metadata-free; see docs/image-inventory.md)
   lib/
-    domain/            TypeScript models: Dog, Photo (+ focal point), Breeding, Inquiry
+    domain/            TypeScript models: Dog, Photo (+ focal point), Breeding, Inquiry; format helpers
     images/focal.ts    focal point → CSS object-position
     color/contrast.ts  WCAG contrast maths (used by the style sheet)
     navigation.ts      the primary menu · site.ts — site name, tagline, URL
@@ -46,6 +52,9 @@ src/
   fonts/               self-hosted .woff2 files + licenses (built by tools/fonts/build_fonts.py)
 tools/
   fonts/build_fonts.py Python dev tool: fetch, subset and convert the fonts (not used at runtime)
+  photos/prepare_photos.py Python dev tool: originals → metadata-free web masters
+docs/image-inventory.md  every photograph: identity, focal points, best use, overlay concerns
+scripts/check-copy.mjs   copy rule: no em/en dashes in visitor-facing strings (npm run lint:copy)
 ```
 
 Design rules the code enforces: two type families, three button variants, status as text (no badges), no shadows on the public site, no raw CSS values where a token exists, visible focus on every interactive element, motion that respects `prefers-reduced-motion`.
@@ -68,6 +77,7 @@ Other commands:
 npm run build        # production build — this is what Vercel runs; it fails on type errors
 npm run start        # serve the production build locally on port 3000
 npm run lint         # code-quality checks
+npm run lint:copy    # no em-dashes or en-dashes in visitor-facing text
 npm run typecheck    # TypeScript only
 npm run fonts        # rebuild src/fonts from the upstream sources (needs Python 3 + `pip install fonttools brotli`)
 ```
@@ -100,4 +110,4 @@ Every account (domain registrar, Vercel, GitHub, database, storage, email, analy
 
 Automated: `npm run lint`, `npm run typecheck`, `npm run build`, Lighthouse (performance, accessibility, best practices, SEO). Manual: iPhone Safari, iPhone Chrome, Android Chrome, Samsung Internet, iPad, laptop, desktop, ultrawide — no horizontal scroll, all tap targets ≥ 48px, keyboard navigation through every page.
 
-Stage 1 results (mobile simulation): home page — Performance 97, Accessibility 100, Best Practices 100; design-system page — Accessibility 100, Best Practices 100. (SEO reports 60 in non-production builds purely because of the intentional `noindex`.)
+Stage 2 results (mobile simulation, photographic homepage): home — Performance 92, Accessibility 100, Best Practices 100, LCP 1.8s, CLS 0.01; dog profile — Performance 95, Accessibility 100, Best Practices 100. SEO reports ~65 in non-production builds purely because of the intentional `noindex`. Verified at 390, 430, 768, 1440, and 2560px: no horizontal overflow; hero works by keyboard, click, and swipe; reduced motion removes the drift; the mobile menu traps focus and returns it on close.
