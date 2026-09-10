@@ -1,0 +1,35 @@
+.section {
+  padding-block: var(--space-8) var(--section-y);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-7);
+}
+
+.lede {
+  max-width: 48ch;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5) var(--gutter);
+  max-width: 48rem;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.note {
+  margin-top: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .form {
+    grid-template-columns: 1fr 1fr;
+  }
+}
