@@ -1,14 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
-import { formatSex, type Dog } from "@/lib/domain/dog";
+import type { Dog } from "@/lib/domain/dog";
+import { dogMeta, isCardStatus } from "@/lib/domain/format";
 import { focalFor, focalToObjectPosition } from "@/lib/images/focal";
 import { StatusLabel } from "@/components/ui/StatusLabel";
 import styles from "./DogCard.module.css";
 
 /**
- * Collection card (brief section 13). Photography first: a 4:5 photograph,
- * then the name in display type, one line of small-caps meta, and the status.
- * No box, no shadow. The whole card is one link to the profile.
+ * Collection card (brief section 13). Photography first: a square photograph,
+ * then the name in display type, one line of meta, and the status when it
+ * means something (a live opportunity or a change of state). No box, no
+ * shadow. The whole card is one link to the profile.
+ *
+ * The frame is square rather than 4:5 because most of the photographs are
+ * finished posters with lettering that a taller crop would cut through.
  */
 
 interface DogCardProps {
@@ -17,22 +22,24 @@ interface DogCardProps {
   sizes?: string;
   /** Marks the image as high priority (above-the-fold cards only). */
   priority?: boolean;
+  /** Larger name for the featured frame. */
+  size?: "default" | "large";
+  /** Heading level for the name, so the card fits its section's outline. */
+  headingLevel?: "h2" | "h3";
 }
 
-const ROLE_LABEL: Record<Dog["role"], string> = {
-  stud: "Stud",
-  female: "Female",
-  production: "Production",
-  puppy: "Puppy",
-};
-
-export function DogCard({ dog, sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw", priority = false }: DogCardProps) {
-  const meta = [dog.role === "stud" || dog.role === "female" ? ROLE_LABEL[dog.role] : formatSex(dog.sex), dog.color]
-    .filter(Boolean)
-    .join(" · ");
+export function DogCard({
+  dog,
+  sizes = "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw",
+  priority = false,
+  size = "default",
+  headingLevel: Heading = "h3",
+}: DogCardProps) {
+  const meta = dogMeta(dog);
+  const cardStatus = isCardStatus(dog.status) ? dog.status : undefined;
 
   return (
-    <Link href={`/dogs/${dog.slug}`} className={styles.card}>
+    <Link href={`/dogs/${dog.slug}`} className={[styles.card, size === "large" ? styles.large : ""].filter(Boolean).join(" ")}>
       <div className={styles.frame}>
         {dog.mainPhoto ? (
           <Image
@@ -48,14 +55,14 @@ export function DogCard({ dog, sizes = "(min-width: 1024px) 33vw, (min-width: 64
           />
         ) : (
           <div className={styles.placeholder} aria-hidden="true">
-            <span className="label">Photo pending</span>
+            <span className="label">Photo coming</span>
           </div>
         )}
       </div>
       <div className={styles.body}>
-        <h3 className={["display-3", styles.name].join(" ")}>{dog.name}</h3>
+        <Heading className={[size === "large" ? "display-2" : "display-3", styles.name].join(" ")}>{dog.name}</Heading>
         {meta && <p className={["label", styles.meta].join(" ")}>{meta}</p>}
-        {dog.status && <StatusLabel status={dog.status} className={styles.status} />}
+        {cardStatus && <StatusLabel status={cardStatus} className={styles.status} />}
         <span className={styles.rule} aria-hidden="true" />
       </div>
     </Link>

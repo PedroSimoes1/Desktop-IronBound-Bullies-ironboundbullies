@@ -1,0 +1,54 @@
+.about {
+  padding-block: var(--section-y);
+  border-top: var(--border-hairline);
+}
+
+.aboutInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: var(--container-text);
+}
+
+.aboutActions {
+  margin-top: var(--space-2);
+}
+
+.contact {
+  padding-block: var(--section-y);
+  border-top: var(--border-hairline);
+  background-color: var(--color-surface);
+}
+
+.contactInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.contactCopy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: var(--container-text);
+}
+
+.contactActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+@media (max-width: 639px) {
+  .contactActions > * {
+    flex: 1 1 100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .contactInner {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}

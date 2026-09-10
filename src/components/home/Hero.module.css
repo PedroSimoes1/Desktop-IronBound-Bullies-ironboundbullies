@@ -1,0 +1,259 @@
+/* Layout: stacked on phones and tablets, split on desktop. */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "media"
+    "column";
+  background-color: var(--color-bg);
+}
+
+.media {
+  grid-area: media;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 72dvh;
+  overflow: hidden;
+  background-color: var(--color-bg);
+  touch-action: pan-y; /* vertical scrolling stays native; horizontal swipes are ours */
+  user-select: none;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--duration-hero) var(--ease-hero);
+  --focal: var(--focal-portrait);
+  --fit: cover;
+}
+
+.slide[data-active] {
+  opacity: 1;
+}
+
+.image {
+  object-fit: var(--fit);
+  object-position: var(--focal);
+  transform: scale(1);
+  transform-origin: var(--focal);
+  transition: transform var(--duration-hero-drift) linear;
+  will-change: transform;
+}
+
+/* The active photograph drifts from 1.00 to 1.04 over eight seconds; it eases back just as slowly while fading out. */
+.slide[data-active] .image {
+  transform: scale(1.04);
+}
+
+/* Reduced motion: no drift, quick fade instead of a slow crossfade. */
+.reducedMotion .slide {
+  transition: opacity 300ms var(--ease-out);
+}
+
+.reducedMotion .image,
+.reducedMotion .slide[data-active] .image {
+  transform: none;
+  transition: none;
+  will-change: auto;
+}
+
+.column {
+  grid-area: column;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-6) var(--gutter) var(--space-7);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+}
+
+.copyInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  animation: heroCopyIn 600ms var(--ease-out) both;
+}
+
+.reducedMotion .copyInner {
+  animation-duration: 200ms;
+}
+
+@keyframes heroCopyIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.name {
+  color: var(--color-fg);
+  overflow-wrap: anywhere;
+}
+
+.descriptor {
+  color: var(--color-fg-muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+@media (max-width: 639px) {
+  .actions > * {
+    flex: 1 1 100%;
+  }
+}
+
+/* Controls: previous, indicators, next, pause. Geometric, no icon library. */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.arrow,
+.playToggle {
+  display: inline-grid;
+  place-items: center;
+  width: var(--touch-target);
+  height: var(--touch-target);
+  color: var(--color-fg-muted);
+  transition: color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+}
+
+.arrow:hover,
+.playToggle:hover {
+  color: var(--color-fg);
+}
+
+.arrow:active,
+.playToggle:active {
+  transform: scale(0.94);
+}
+
+.chevronLeft,
+.chevronRight {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-top: 1.5px solid currentColor;
+  border-left: 1.5px solid currentColor;
+}
+
+.chevronLeft {
+  transform: translateX(2px) rotate(-45deg);
+}
+
+.chevronRight {
+  transform: translateX(-2px) rotate(135deg);
+}
+
+.pauseIcon,
+.playIcon {
+  display: block;
+  width: 10px;
+  height: 12px;
+}
+
+.pauseIcon {
+  border-left: 3px solid currentColor;
+  border-right: 3px solid currentColor;
+}
+
+.playIcon {
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 10px solid currentColor;
+  margin-left: 2px;
+}
+
+.indicators {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  max-width: 16rem;
+}
+
+.indicator {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: var(--touch-target);
+}
+
+.indicator::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background-color: var(--color-line-strong);
+  transform: translateY(-50%);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.indicator:hover::after {
+  background-color: var(--color-fg-muted);
+}
+
+.indicator[aria-current="true"]::after {
+  background-color: var(--color-accent);
+}
+
+.indicators li {
+  flex: 1;
+  min-width: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-areas: "column media";
+    min-height: calc(100dvh - var(--header-height));
+  }
+
+  .media {
+    aspect-ratio: auto;
+    max-height: none;
+    height: 100%;
+    min-height: calc(100dvh - var(--header-height));
+  }
+
+  .slide {
+    --focal: var(--focal-landscape);
+    --fit: var(--desktop-fit);
+  }
+
+  .column {
+    padding: var(--space-9) var(--space-8) var(--space-8) var(--gutter);
+    justify-content: flex-end;
+    gap: var(--space-9);
+  }
+
+  .copyInner {
+    gap: var(--space-5);
+  }
+}
+
+@media (min-width: 1600px) {
+  .column {
+    padding-left: max(var(--gutter), calc((100vw - var(--container-wide)) / 2));
+  }
+}
