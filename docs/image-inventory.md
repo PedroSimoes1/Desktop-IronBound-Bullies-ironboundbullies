@@ -1,0 +1,31 @@
+# Image inventory
+
+Source: `IronBound Bullies/Pictures of Dog (09-09-2026)` (12 originals, untouched). Web masters live in `src/photos/` (metadata stripped, long edge ≤ 2560px, JPEG q86), produced by `tools/photos/prepare_photos.py`.
+
+Identification rule: a dog is named only when the name is printed in the photograph itself. Two photographs carry no text and are marked NEEDS IDENTIFICATION; they are not used anywhere on the site until the owner names them.
+
+Focal points are fractions of width and height (0,0 = top-left). **Desktop focal** anchors wide crops. **Portrait focal** anchors square/tall crops and is chosen so the dog's face *and* the embedded lettering both stay inside the frame. Ten of twelve photographs are finished "posters" with the dog's name and the kennel mark composited in; those are never cropped through the lettering. On desktop the hero shows near-square posters whole (contained on the black stage) and crops only the landscape frames.
+
+| Image | Dog | Orientation | Dimensions | Embedded text | Best use | Desktop focal | Portrait focal | Overlay concerns |
+|---|---|---|---|---|---|---|---|---|
+| IMG_3588 → `voodoo-01.jpg` | **Voodoo** | Near-square (1.02:1) | 2094 × 2048 | "IRONBOUND BULLIES X BULLY PRESTIGE", "VOODOO" (red brush script), "@PAWDTOGRAPHY" | Hero (slide 1), profile | 0.30, 0.66 | 0.35, 0.62 | Large lettering across the top 15–42 % of the frame. Never overlay text on the image; site text sits beside it. |
+| IMG_3589 → `voodoo-02.jpg` | **Voodoo** | Near-square (1.08:1) | 2214 × 2048 | "IRONBOUND BULLIES · BULLY PRESTIGE", "VOODOO" (orange/white), photographer mark | Featured (large), collection card, profile gallery | 0.45, 0.58 | 0.45, 0.58 | Lettering top 12–40 %. Frontal stance; strongest single frame of Voodoo. |
+| IMG_3590 → `unidentified-01.jpg` | **NEEDS IDENTIFICATION** (dark tri, concrete, green gate) | Landscape (1.53:1) | 2868 × 1876 | None | Hero candidate once named (clean, no lettering); profile | 0.45, 0.58 | 0.45, 0.60 | None. Best unlettered frame in the set. |
+| IMG_3591 → `unidentified-02.jpg` | **NEEDS IDENTIFICATION** (dark tri, gravel, snow) | Gentle landscape (1.27:1) | 2597 × 2048 | None | Hero candidate once named; profile | 0.47, 0.62 | 0.47, 0.64 | None. |
+| IMG_3592 → `knuckles-01.jpg` | **Knuckles** | Near-square (1.06:1) | 2163 × 2048 | "IRONBOUND BULLIES", "KNUCKLES" (orange), ghost lettering, photographer mark | Featured (small), profile gallery | 0.60, 0.68 | 0.58, 0.68 | Lettering top 16–40 %, ghost outline reaches the edges (7–92 % of width): keep crops centred. |
+| IMG_3593 → `shadow-01.jpg` | **Shadow** | Near-square (1.02:1) | 2087 × 2048 | "IRONBOUND BULLIES", "SHADOW" (yellow/white), "@FFBPHOTOGRAPH" | Featured (small), collection card, profile | 0.47, 0.62 | 0.47, 0.62 | Lettering top 12–40 %. Frontal stance. |
+| IMG_3594 → `missy-01.jpg` | **Missy** | Gentle landscape (1.25:1) | 2563 × 2048 | Kennel crest, "MISSY", "@ag photography" (right side, 25–58 % down) | Profile gallery, collection card | 0.42, 0.55 | 0.45, 0.55 | Lettering on the right (62–83 % of width): square crops must keep the window ≥ 5–85 %. |
+| IMG_3595 → `minnie-01.jpg` | **Minnie** | Landscape (1.50:1) | 3071 × 2048 | Kennel crest, "Minnie", "@ag photography" (small, centre-right) | Hero (slide 4), collection card, profile | 0.45, 0.60 | 0.45, 0.62 | Handler's shoe at the far right edge (> 93 % width) and a leash above the dog: square/portrait crops exclude the shoe by anchoring at 0.45. |
+| IMG_3596 → `shadow-02.jpg` | **Shadow** | Near-square (1.07:1) | 2201 × 2048 | "IRONBOUND BULLIES", "SHADOW" (red), ghost lettering | Hero (slide 3), profile gallery | 0.35, 0.68 | 0.45, 0.66 | Lettering top 13–35 %. Side profile facing left. |
+| IMG_3597 → `knuckles-02.jpg` | **Knuckles** | Near-square (1.05:1) | 2150 × 2048 | "IRONBOUND BULLIES", "KNUCKLES" (green/white), photographer mark | Hero (slide 2), collection card, profile | 0.54, 0.60 | 0.50, 0.60 | Lettering top 10–36 %. Frontal stance. |
+| IMG_3598 → `minnie-02.jpg` | **Minnie** | Wide landscape (1.63:1) | 3339 × 2048 | Kennel crest, "MINNIE", "@ag photography" (centre-right) | Profile gallery only | 0.55, 0.56 | 0.55, 0.58 | Handler's legs and shoes occupy the left 22 % of the frame: every crop starts at ≥ 24 %. Dog is small in frame; not a hero image. |
+| IMG_3599 → `missy-02.jpg` | **Missy** | Gentle landscape (1.25:1) | 2568 × 2048 | Kennel crest, "MISSY", "@ag photography" (right, 12–43 % down) | Hero (slide 5), collection card, profile | 0.40, 0.52 | 0.45, 0.52 | Lettering on the right (55–75 % of width). Closest, most expressive frame of Missy. |
+
+## Decisions that follow from the inventory
+
+- **Hero composition.** Because the posters already carry the dog's name in large lettering, the site does not print text over the photograph. Desktop: a fixed text column (name, one verified descriptor, two CTAs) on the black stage with the photograph filling the right column, near-square posters shown whole, landscape frames cover-cropped on the desktop focal point. Phones and tablets: the photograph in a square frame (portrait focal point), text below. Text position never moves while photographs change.
+- **Hero order** (alternating side/front stances, no image reused in Featured): Voodoo `voodoo-01` → Knuckles `knuckles-02` → Shadow `shadow-02` → Minnie `minnie-01` → Missy `missy-02`.
+- **Featured dogs** (homepage, asymmetric 1 + 2): Voodoo `voodoo-02` (large), Knuckles `knuckles-01`, Shadow `shadow-01`.
+- **Collection and featured frames are square (1:1)**, not 4:5: a 4:5 crop of a square poster cuts through the lettering.
+- **Descriptors** shown in the hero come from the current public profile (breed and color) and remain flagged VERIFY (V7/V8). Missy is not listed on the current profile: her slide shows the name only until the owner supplies details (V1).
+- **Requests for the owner:** (1) identify the dogs in IMG_3590 and IMG_3591; (2) if the un-lettered originals of the posters exist, supply them: they allow full-bleed compositions later; (3) any portrait-orientation frames of the studs.
