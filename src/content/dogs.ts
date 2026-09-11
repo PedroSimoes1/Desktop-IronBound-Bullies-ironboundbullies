@@ -107,6 +107,20 @@ export function featuredDogs(): Dog[] {
   return dogs.filter((dog) => dog.featured && dog.mainPhoto);
 }
 
+/**
+ * Splits a list into the dogs we hold photographs of and the rest.
+ *
+ * The two halves are presented differently: photographs become picture cards,
+ * and the rest become a typographic roster. A grid of empty "photo coming"
+ * frames would say the site is unfinished, which is the opposite of the truth.
+ */
+export function splitByPhoto(list: Dog[] = dogs): { photographed: Dog[]; listed: Dog[] } {
+  return {
+    photographed: list.filter((dog) => dog.mainPhoto),
+    listed: list.filter((dog) => !dog.mainPhoto),
+  };
+}
+
 /** Dogs currently offered for sale. None are verified yet, so the list is empty (V5). */
 export function availableDogs(): Dog[] {
   return dogs.filter((dog) => dog.status === "available" || dog.status === "reserved" || dog.status === "upcoming");

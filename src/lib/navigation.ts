@@ -1,13 +1,13 @@
 /**
- * Primary navigation. Kept to six items maximum (Phase 0, Part 4).
- * Only routes that exist are listed. Canonical CTA labels (one label per
- * intent, reused everywhere): Our dogs · Available dogs · Inquire · Stud
- * service · View profile.
+ * Primary navigation. Four destinations and one call to action, so the bar
+ * stays on a single line at every desktop width (Taste Skill 4.7).
  *
- * Still to come as pages are built:
- *   { label: "Breedings",   href: "/breedings" }
- *   { label: "Productions", href: "/productions" }
- *   { label: "About",       href: "/about" }
+ * Canonical CTA labels, one per intent, reused everywhere on the site:
+ *   Our dogs · Available dogs · Inquire · Stud service · View profile
+ *
+ * Productions is deliberately absent: the current profile shows 22 production
+ * photographs with no names, so there is nothing honest to put on that page
+ * yet (Phase 0, VERIFY V6). It joins the menu when the owner supplies them.
  */
 
 export interface NavItem {
@@ -17,7 +17,9 @@ export interface NavItem {
 
 export const primaryNavigation: readonly NavItem[] = [
   { label: "Our dogs", href: "/dogs" },
+  { label: "Breedings", href: "/breedings" },
   { label: "Available dogs", href: "/available" },
+  { label: "About", href: "/about" },
 ];
 
 /** The single persistent call-to-action in the header (brief section 45). */

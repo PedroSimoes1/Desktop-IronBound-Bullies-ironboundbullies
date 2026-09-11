@@ -6,33 +6,38 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { headerCta, isCurrent, primaryNavigation } from "@/lib/navigation";
+import { contact } from "@/lib/site";
 import styles from "./SiteHeader.module.css";
 
 /**
  * Site header (brief sections 44 and 45).
  *
- * Desktop: wordmark left, links right, one CTA. Compacts into a blurred bar
- * once the page scrolls (detected with an IntersectionObserver sentinel, no
- * scroll listener).
+ * The header is fixed and transparent at rest so the photography runs beneath
+ * it; it becomes a blurred bar with a hairline once the page scrolls (detected
+ * with an IntersectionObserver sentinel, never a scroll listener).
  *
+ * Desktop: wordmark left, four links and one CTA right, always on one line.
  * Mobile: the menu is a native <dialog> opened with showModal(), which gives
  * focus trapping, Escape-to-close, an inert page behind it, and focus
- * returning to the button that opened it, all from the browser. The dialog
- * draws its own top bar so the wordmark and the close control stay exactly
- * where the header's are.
+ * returning to the button that opened it, all from the browser.
  */
 
+/** How far the page must move before the header becomes a solid bar. */
 const SCROLL_THRESHOLD_PX = 24;
 
+/**
+ * True once the page has scrolled past the threshold.
+ *
+ * The signal is a marker of exactly that height sitting at the top of the
+ * document: while any of it is still in the viewport the page is at the top.
+ * An IntersectionObserver watches it, so nothing runs on the scroll thread.
+ */
 function useScrolled(sentinelRef: React.RefObject<HTMLDivElement | null>): boolean {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
-    const observer = new IntersectionObserver(([entry]) => setScrolled(!entry.isIntersecting), {
-      rootMargin: `-${SCROLL_THRESHOLD_PX}px 0px 0px 0px`,
-      threshold: 0,
-    });
+    const observer = new IntersectionObserver(([entry]) => setScrolled(!entry.isIntersecting), { threshold: 0 });
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, [sentinelRef]);
@@ -70,27 +75,28 @@ export function SiteHeader() {
 
   return (
     <>
-      <div ref={sentinelRef} className={styles.sentinel} aria-hidden="true" />
+      <div ref={sentinelRef} className={styles.sentinel} style={{ height: SCROLL_THRESHOLD_PX }} aria-hidden="true" />
       <header className={headerClass}>
         <div className={styles.bar}>
           <Wordmark size="header" className={styles.wordmark} />
 
-          <nav className={styles.desktopNav} aria-label="Primary">
-            <ul role="list" className={styles.navList}>
-              {primaryNavigation.map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href} className={styles.navLink} aria-current={isCurrent(pathname, item) ? "page" : undefined}>
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
           <div className={styles.actions}>
+            <nav className={styles.desktopNav} aria-label="Primary">
+              <ul role="list" className={styles.navList}>
+                {primaryNavigation.map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href} className={styles.navLink} aria-current={isCurrent(pathname, item) ? "page" : undefined}>
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
             <Button href={headerCta.href} variant="secondary" size="compact" className={styles.cta}>
               {headerCta.label}
             </Button>
+
             <button type="button" className={styles.menuButton} aria-expanded={menuOpen} aria-haspopup="dialog" onClick={openMenu}>
               <span className={styles.menuIcon} aria-hidden="true" />
               <span className="sr-only">Open menu</span>
@@ -116,27 +122,39 @@ export function SiteHeader() {
             <span className="sr-only">Close menu</span>
           </button>
         </div>
-        <nav aria-label="Primary" className={styles.menuNav}>
-          <ul role="list" className={styles.menuList}>
-            {primaryNavigation.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={["display-1", styles.menuLink].join(" ")}
-                  aria-current={isCurrent(pathname, item) ? "page" : undefined}
-                  onClick={closeMenu}
-                >
-                  {item.label}
+
+        <div className={styles.menuBody}>
+          <nav aria-label="Primary">
+            <ul role="list" className={styles.menuList}>
+              {primaryNavigation.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={["display-1", styles.menuLink].join(" ")}
+                    aria-current={isCurrent(pathname, item) ? "page" : undefined}
+                    onClick={closeMenu}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link href={headerCta.href} className={["display-1", styles.menuLink, styles.menuCta].join(" ")} onClick={closeMenu}>
+                  {headerCta.label}
                 </Link>
               </li>
-            ))}
-            <li>
-              <Link href={headerCta.href} className={["display-1", styles.menuLink].join(" ")} onClick={closeMenu}>
-                {headerCta.label}
-              </Link>
-            </li>
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+
+          <div className={styles.menuContact}>
+            <a href={contact.phone.href} className={["body-lg", styles.menuContactLink].join(" ")}>
+              {contact.phone.display}
+            </a>
+            <a href={contact.instagram.href} className={["body-lg", styles.menuContactLink].join(" ")} target="_blank" rel="noopener noreferrer">
+              {contact.instagram.display}
+            </a>
+          </div>
+        </div>
       </dialog>
     </>
   );

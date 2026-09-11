@@ -8,7 +8,8 @@
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
     "media"
-    "intro";
+    "intro"
+    "gallery";
 }
 
 .media {
@@ -16,25 +17,39 @@
   background-color: var(--color-bg);
 }
 
+/* Native aspect ratio, never cropped: the dog's name is composited into most
+   of these frames and a crop would cut it. */
 .mainPhoto {
   width: 100%;
   height: auto;
 }
 
-.placeholder {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 1 / 1;
-  border: var(--border-hairline);
-  color: var(--color-fg-subtle);
-}
-
 .intro {
   grid-area: intro;
+  /* The name is sized against this column, not the window, so a long name
+     such as SRIRACHA never runs past it. */
+  container-type: inline-size;
+  padding: var(--space-6) var(--gutter) var(--space-7);
+}
+
+.introInner {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-6) var(--gutter) var(--space-7);
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+/* Two class selectors so this beats .display-hero's viewport-based size. */
+.introInner .name {
+  font-size: clamp(3.5rem, 22cqw, 9rem);
+  max-width: 100%;
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
 }
 
 .descriptor {
@@ -42,7 +57,7 @@
 }
 
 .summary {
-  margin-top: var(--space-2);
+  max-width: 34ch;
 }
 
 .description {
@@ -55,7 +70,7 @@
   flex-direction: column;
   gap: var(--space-2);
   padding-top: var(--space-5);
-  margin-top: var(--space-2);
+  width: 100%;
   border-top: var(--border-hairline);
 }
 
@@ -64,55 +79,43 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-4);
-  margin-top: var(--space-4);
+  margin-top: var(--space-1);
 }
 
-@media (max-width: 639px) {
-  .actions > :first-child {
-    flex: 1 1 100%;
-  }
-}
-
-/* Specification: three clusters, one soft divider each, never a hairline per row. */
-.specs {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-7) var(--gutter);
-  padding-block: var(--space-8);
+/* Facts sit in the same column as everything else the kennel has said, so the
+   column carries its own weight instead of leaving a void beside the photo. */
+.facts {
+  width: 100%;
+  padding-top: var(--space-6);
+  margin-top: var(--space-2);
   border-top: var(--border-hairline);
 }
 
-.cluster {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.clusterTitle {
-  color: var(--color-fg-subtle);
-}
-
-.specList {
+.factList {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-4) var(--space-5);
+  gap: var(--space-5) var(--space-6);
 }
 
-.specRow {
+.fact {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
 }
 
-.gallery {
-  padding-top: var(--space-8);
-  border-top: var(--border-hairline);
+.factLabel {
+  color: var(--color-fg-subtle);
 }
 
-.galleryGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--gutter);
+/* Gallery: the remaining photographs continue down the photograph column, each
+   at its own aspect ratio and never cropped. */
+.gallery {
+  grid-area: gallery;
+}
+
+.galleryList {
+  display: flex;
+  flex-direction: column;
 }
 
 .galleryPhoto {
@@ -120,27 +123,43 @@
   height: auto;
 }
 
-@media (min-width: 640px) {
-  .specs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .galleryGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 @media (min-width: 1024px) {
   .top {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    grid-template-areas: "intro media";
-    align-items: start;
+    grid-template-areas:
+      "intro media"
+      "intro gallery";
+    grid-template-rows: auto 1fr;
   }
 
   .intro {
-    padding: var(--space-9) var(--space-8) var(--space-8) var(--gutter);
+    padding: calc(var(--header-height) + var(--space-8)) var(--space-8) var(--space-8) var(--gutter);
+  }
+
+  /* The words stay with the reader while the photographs scroll past. */
+  .introInner {
     position: sticky;
-    top: var(--header-height);
+    top: calc(var(--header-height) + var(--space-7));
+  }
+
+  /* A dog we hold no photograph of gets a title page rather than an empty grid. */
+  .topSolo {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "intro";
+    min-height: 78dvh;
+    align-content: center;
+  }
+
+  .topSolo .intro {
+    max-width: 46rem;
+  }
+
+  .topSolo .introInner {
+    position: static;
+  }
+
+  .factList {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

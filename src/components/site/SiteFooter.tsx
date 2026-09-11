@@ -1,13 +1,17 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { headerCta, primaryNavigation } from "@/lib/navigation";
-import { isProduction, site } from "@/lib/site";
+import { contact, site } from "@/lib/site";
 import styles from "./SiteFooter.module.css";
 
 /**
- * Business footer (brief section 46). Contact details, social links, and
- * legal pages are added once the owner verifies them (audit V10, V11, V15).
- * The placeholders that mark those columns are shown only outside production.
+ * Business footer (brief section 46). Four things and nothing else: who the
+ * kennel is, where to go, how to reach it, and the year.
+ *
+ * The contact details are the ones the business already publishes on its
+ * current profile. VERIFY V10 and V11 before launch: confirm the number and
+ * the address, decide whether the aol address is replaced by a domain
+ * address, and add Facebook only if a business page exists.
  */
 
 export function SiteFooter() {
@@ -35,19 +39,26 @@ export function SiteFooter() {
           </ul>
         </nav>
 
-        {!isProduction && (
-          <>
-            <div className={styles.column}>
-              <h2 className={["label", styles.heading].join(" ")}>Contact</h2>
-              <p className={["body-sm", "subtle"].join(" ")}>[TO BE PROVIDED]</p>
-            </div>
-
-            <div className={styles.column}>
-              <h2 className={["label", styles.heading].join(" ")}>Follow</h2>
-              <p className={["body-sm", "subtle"].join(" ")}>[TO BE PROVIDED]</p>
-            </div>
-          </>
-        )}
+        <div className={styles.column}>
+          <h2 className={["label", styles.heading].join(" ")}>Contact</h2>
+          <ul role="list" className={styles.links}>
+            <li>
+              <a href={contact.phone.href} className={styles.link}>
+                {contact.phone.display}
+              </a>
+            </li>
+            <li>
+              <a href={contact.email.href} className={styles.link}>
+                {contact.email.display}
+              </a>
+            </li>
+            <li>
+              <a href={contact.instagram.href} className={styles.link} target="_blank" rel="noopener noreferrer">
+                {contact.instagram.display}
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div className={styles.legal}>

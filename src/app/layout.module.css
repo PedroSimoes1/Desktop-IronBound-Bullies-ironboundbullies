@@ -1,5 +1,20 @@
+/* The header is fixed, so pages reserve room for it. A page whose first
+   element is a full-bleed photograph opts out by marking that element
+   data-bleed-top, and the picture runs up behind the header instead.
+   Browsers without :has() simply keep the padding: the hero starts below the
+   header rather than beneath it, which degrades without breaking. */
 .main {
   min-height: 60dvh;
+  padding-top: var(--header-height);
+}
+
+/* Only from the desktop breakpoint. On a phone the photograph fills the width,
+   so running it under the header would dim the lettering composited into the
+   top of the frame; the header keeps its own black band instead. */
+@media (min-width: 1024px) {
+  .main:has(> [data-bleed-top]) {
+    padding-top: 0;
+  }
 }
 
 /* Keyboard users: first Tab press reveals a link straight to the content. */

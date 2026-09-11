@@ -31,9 +31,14 @@ export interface Breeding {
   id: string;
   /** URL segment: /breedings/voodoo-x-sriracha */
   slug: string;
-  sireId: string;
-  damId: string;
-  status: BreedingStatus;
+  /** The kennel's own dog, when the parent has a profile here. */
+  sireId?: string;
+  damId?: string;
+  /** Free-text parent name for an outside dog with no profile of ours. */
+  sireName?: string;
+  damName?: string;
+  /** Absent until the owner states where the breeding stands. Never assumed. */
+  status?: BreedingStatus;
   /** Optional bloodline headline in the owner's words, e.g. "Gotty meets Big30". */
   headline?: string;
   /** ISO dates. Only present when the owner knows them. */
