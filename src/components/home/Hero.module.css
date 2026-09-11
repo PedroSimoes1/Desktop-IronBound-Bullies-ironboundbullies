@@ -13,7 +13,10 @@
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  max-height: 72dvh;
+  /* Capped so the dog's name and the buttons are still in the first screen on a
+     phone. At 68dvh the crop only bites on tablets, and by less than a tenth of
+     the frame, which the focal point absorbs without touching the lettering. */
+  max-height: 68dvh;
   overflow: hidden;
   background-color: var(--color-bg);
   touch-action: pan-y; /* vertical scrolling stays native; horizontal swipes are ours */
@@ -61,10 +64,13 @@
 
 .column {
   grid-area: column;
+  /* The dog's name is sized against this column, not the viewport, so a long
+     name such as KNUCKLES never wraps at any width. */
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: var(--space-6);
+  gap: var(--space-7);
   padding: var(--space-6) var(--gutter) var(--space-7);
 }
 
@@ -76,6 +82,7 @@
 .copyInner {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: var(--space-4);
   animation: heroCopyIn 600ms var(--ease-out) both;
 }
@@ -95,26 +102,27 @@
   }
 }
 
-.name {
+/* Two class selectors so this beats .display-hero's viewport-based size. The
+   name is measured against its own column, not the window: at 20cqw a name as
+   long as KNUCKLES fills about three quarters of the column at every width and
+   never runs into the photograph. */
+.copyInner .name {
+  font-size: clamp(4.5rem, 20cqw, 9rem);
+  max-width: 100%;
   color: var(--color-fg);
-  overflow-wrap: anywhere;
 }
 
 .descriptor {
   color: var(--color-fg-muted);
 }
 
+/* Buttons at their natural width, wrapping if the phone is very narrow.
+   Never two full-width bars: that reads as an app, not as a brand. */
 .actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
   margin-top: var(--space-2);
-}
-
-@media (max-width: 639px) {
-  .actions > * {
-    flex: 1 1 100%;
-  }
 }
 
 /* Controls: previous, indicators, next, pause. Geometric, no icon library. */
@@ -130,7 +138,7 @@
   place-items: center;
   width: var(--touch-target);
   height: var(--touch-target);
-  color: var(--color-fg-muted);
+  color: var(--color-fg-subtle);
   transition: color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
 }
 
@@ -142,6 +150,10 @@
 .arrow:active,
 .playToggle:active {
   transform: scale(0.94);
+}
+
+.arrow:first-child {
+  margin-left: calc(var(--space-3) * -1);
 }
 
 .chevronLeft,
@@ -187,7 +199,7 @@
   align-items: center;
   gap: var(--space-2);
   flex: 1;
-  max-width: 16rem;
+  max-width: 14rem;
 }
 
 .indicator {
@@ -204,7 +216,7 @@
   right: 0;
   top: 50%;
   height: 2px;
-  background-color: var(--color-line-strong);
+  background-color: var(--color-line);
   transform: translateY(-50%);
   transition: background-color var(--duration-fast) var(--ease-out);
 }
@@ -214,7 +226,7 @@
 }
 
 .indicator[aria-current="true"]::after {
-  background-color: var(--color-accent);
+  background-color: var(--color-accent-fg);
 }
 
 .indicators li {
@@ -223,17 +235,19 @@
 }
 
 @media (min-width: 1024px) {
+  /* The photograph takes three fifths of the screen and runs up behind the
+     header; the type column is deliberately the narrower half. */
   .hero {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-columns: minmax(0, 9fr) minmax(0, 14fr);
     grid-template-areas: "column media";
-    min-height: calc(100dvh - var(--header-height));
+    min-height: 100dvh;
   }
 
   .media {
     aspect-ratio: auto;
     max-height: none;
     height: 100%;
-    min-height: calc(100dvh - var(--header-height));
+    min-height: 100dvh;
   }
 
   .slide {
@@ -242,9 +256,9 @@
   }
 
   .column {
-    padding: var(--space-9) var(--space-8) var(--space-8) var(--gutter);
+    padding: calc(var(--header-height) + var(--space-6)) var(--space-8) var(--space-8) var(--gutter);
     justify-content: flex-end;
-    gap: var(--space-9);
+    gap: var(--space-8);
   }
 
   .copyInner {

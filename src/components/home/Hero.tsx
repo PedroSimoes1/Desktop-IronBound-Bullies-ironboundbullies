@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/Button";
 import type { Photo } from "@/lib/domain/photo";
 import { focalToObjectPosition } from "@/lib/images/focal";
@@ -56,6 +56,22 @@ function useReducedMotion(): boolean {
   );
 }
 
+const noopSubscribe = () => () => {};
+
+/**
+ * False while the server renders and during the first client render, true
+ * afterwards. The server therefore sends the markup for one photograph only:
+ * the browser's preload scanner sees the hero image and nothing competing with
+ * it, and the neighbouring slides are added once the page is interactive.
+ */
+function useHydrated(): boolean {
+  return useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  );
+}
+
 function subscribeVisibility(onChange: () => void) {
   document.addEventListener("visibilitychange", onChange);
   return () => document.removeEventListener("visibilitychange", onChange);
@@ -78,7 +94,7 @@ export function Hero({ slides }: HeroProps) {
   const [userPaused, setUserPaused] = useState(false);
   const reducedMotion = useReducedMotion();
   const pageVisible = usePageVisible();
-  const headingId = useId();
+  const hydrated = useHydrated();
   const pointerStart = useRef<{ x: number; y: number } | null>(null);
 
   const autoplaying = count > 1 && !userControlled && !userPaused && !hovering && !focusWithin && pageVisible;
@@ -129,15 +145,20 @@ export function Hero({ slides }: HeroProps) {
   };
 
   const current = slides[index];
-  // Previous stays mounted so it can fade out; next is mounted early so it is loaded before it is shown.
-  const mounted = new Set([(index - 1 + count) % count, index, (index + 1) % count]);
+  // Previous stays mounted so it can fade out; next is mounted early so it is
+  // loaded before it is shown. Until the page is hydrated only the first
+  // photograph exists, so nothing competes with it for the first paint.
+  const mounted = hydrated
+    ? new Set([(index - 1 + count) % count, index, (index + 1) % count])
+    : new Set([index]);
 
   return (
     <section
       className={[styles.hero, reducedMotion ? styles.reducedMotion : ""].filter(Boolean).join(" ")}
+      data-bleed-top=""
       role="region"
       aria-roledescription="carousel"
-      aria-labelledby={headingId}
+      aria-label="Featured dogs"
       onKeyDown={onKeyDown}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
@@ -162,7 +183,9 @@ export function Hero({ slides }: HeroProps) {
               aria-hidden={!active}
               style={
                 {
-                  "--focal-landscape": focalToObjectPosition(slide.photo.focal),
+                  // A contained photograph is not cropped, so a focal point would
+                  // only shove it off centre and open an uneven band beside it.
+                  "--focal-landscape": landscape ? focalToObjectPosition(slide.photo.focal) : "50% 50%",
                   "--focal-portrait": focalToObjectPosition(slide.photo.focalPortrait ?? slide.photo.focal),
                   "--desktop-fit": landscape ? "cover" : "contain",
                 } as React.CSSProperties
@@ -172,7 +195,7 @@ export function Hero({ slides }: HeroProps) {
                 src={slide.photo.src}
                 alt={slide.photo.alt}
                 fill
-                sizes="(min-width: 1024px) 58vw, 100vw"
+                sizes="(min-width: 1024px) 62vw, 100vw"
                 priority={i === 0}
                 placeholder={slide.photo.blurDataUrl ? "blur" : "empty"}
                 blurDataURL={slide.photo.blurDataUrl}
@@ -188,9 +211,10 @@ export function Hero({ slides }: HeroProps) {
         {/* The live region stays mounted; only its content is re-keyed so the fade-in replays per dog. */}
         <div className={styles.copy} aria-live={autoplaying ? "off" : "polite"} aria-atomic="true">
           <div key={current.slug} className={styles.copyInner}>
-            <h1 id={headingId} className={["display-hero", styles.name].join(" ")}>
-              {current.name}
-            </h1>
+            {/* The dog's name is the slide's label, not the page's heading: the
+                page's h1 belongs to the kennel, and an h1 that changes every
+                six seconds would belong to no one. */}
+            <p className={["display-hero", styles.name].join(" ")}>{current.name}</p>
             {current.descriptor && <p className={["label", styles.descriptor].join(" ")}>{current.descriptor}</p>}
             <div className={styles.actions}>
               <Button href={`/dogs/${current.slug}`}>View profile</Button>

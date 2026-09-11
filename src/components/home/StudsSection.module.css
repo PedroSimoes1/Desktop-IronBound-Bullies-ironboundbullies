@@ -1,42 +1,72 @@
 .section {
   padding-block: var(--section-y);
-  border-top: var(--border-hairline);
 }
 
-.header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-4);
+.title {
   margin-bottom: var(--space-7);
 }
 
-/* Phones: the lead frame full width, the two supporting frames side by side. */
+/* Phones: the lead frame full width, the supporting pair side by side, terms last. */
 .grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+
+.support {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-6) var(--gutter);
+  gap: var(--gutter);
 }
 
-.lead {
-  grid-column: 1 / -1;
+.terms {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
 }
 
-/* Desktop: lead spans two rows on the left; the supporting frames stack on the right.
-   Widths are 2fr : 1fr with square frames, so the heights line up. */
+.fee {
+  color: var(--color-fg);
+}
+
+.feeLabel {
+  color: var(--color-fg-muted);
+}
+
+.feeNote {
+  margin-top: var(--space-2);
+}
+
+.termsAction {
+  margin-top: var(--space-4);
+}
+
 @media (min-width: 1024px) {
+  /* Two columns at 2:1. The supporting column starts lower and the terms block
+     sits under the lead: the two columns then end level without either being
+     stretched to match the other. */
   .grid {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-    grid-template-rows: auto auto;
-    gap: var(--gutter);
+    display: grid;
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    column-gap: var(--gutter);
+    align-items: start;
   }
 
   .lead {
     grid-column: 1;
-    grid-row: 1 / span 2;
   }
 
-  .small {
+  .support {
     grid-column: 2;
+    grid-row: 1 / span 2;
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: var(--space-7);
+  }
+
+  .terms {
+    grid-column: 1;
+    margin-top: var(--space-7);
+    max-width: 32ch;
   }
 }
