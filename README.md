@@ -10,8 +10,9 @@ This README is written so that someone can return months from now and understand
 |---|---|---|
 | 0 | Audit, design directions, sitemap, architecture, admin plan, domain/deploy plan (see the project documents) | Done |
 | 1 | Project foundation: tokens, fonts, core components, living style sheet, 404/error pages | Done |
-| **2** | **Photo inventory and focal points, cinematic homepage hero, featured dogs, dog collection and profiles, available page, inquiry form preview** (branch `taste-skill-test`) | **Done, awaiting owner review** |
-| 3 | Breedings, productions, gallery, about | Next |
+| 2 | Photo inventory and focal points, cinematic homepage hero, featured dogs, dog collection and profiles, available page, inquiry form preview (branch `taste-skill-test`) | Done |
+| **2.5** | **Design refinement: homepage story, staggered studs section, breedings, about, typographic roster instead of empty photo frames, floating header, inquiry types, real contact details** (branch `taste-refinement-v1`) | **Done, awaiting owner review** |
+| 3 | Productions and gallery (blocked: the 22 production photographs have no names yet) | Next |
 | 4 | Inquiry form delivery (validation, spam protection) and owner inbox | Planned |
 | 5 | Database + owner dashboard (/admin), photo upload pipeline | Planned |
 | 6 | SEO (sitemap, structured data, OG images), analytics, legal pages | Planned |
@@ -25,8 +26,10 @@ One Next.js application does everything: it renders the public pages, it will ho
 src/
   app/                 routes (Next.js App Router). Each folder is a URL.
     layout.tsx         the shell every page shares: fonts, header, footer, metadata defaults
-    page.tsx           "/"  — homepage: hero, featured dogs, about, inquiry band
+    page.tsx           "/"  — homepage: hero, statement, studs, breedings, females, inquiry
     dogs/              "/dogs", "/dogs/studs", "/dogs/females", "/dogs/[slug]" profiles
+    breedings/         "/breedings" the two verified pairings
+    about/             "/about" the kennel's own statement and its contact channels
     available/         "/available" (honest empty state until dogs are verified)
     contact/           "/contact" inquiry form (preview; delivery arrives in Stage 4)
     design-system/     "/design-system" — the living style sheet (never indexed)
@@ -34,10 +37,10 @@ src/
     fonts.ts           the two type families, loaded with next/font/local
   components/
     ui/                building blocks: Button, StatusLabel, Container, Section, Wordmark, form/
-    dogs/              DogCard, DogCollection
-    home/              Hero (carousel), FeaturedDogs, HomeSections
-    site/              SiteHeader (native <dialog> menu), SiteFooter
-  content/             dogs.ts, photos.ts — the typed records the site renders (database later)
+    dogs/              DogCard, DogCollection (picture cards plus a typographic roster)
+    home/              Hero (carousel), StudsSection, HomeSections
+    site/              SiteHeader (floating, native <dialog> menu), SiteFooter
+  content/             dogs.ts, photos.ts, breedings.ts — the typed records the site renders (database later)
   photos/              web masters of the owner's photographs (metadata-free; see docs/image-inventory.md)
   lib/
     domain/            TypeScript models: Dog, Photo (+ focal point), Breeding, Inquiry; format helpers
@@ -110,4 +113,10 @@ Every account (domain registrar, Vercel, GitHub, database, storage, email, analy
 
 Automated: `npm run lint`, `npm run typecheck`, `npm run build`, Lighthouse (performance, accessibility, best practices, SEO). Manual: iPhone Safari, iPhone Chrome, Android Chrome, Samsung Internet, iPad, laptop, desktop, ultrawide — no horizontal scroll, all tap targets ≥ 48px, keyboard navigation through every page.
 
-Stage 2 results (mobile simulation, photographic homepage): home — Performance 92, Accessibility 100, Best Practices 100, LCP 1.8s, CLS 0.01; dog profile — Performance 95, Accessibility 100, Best Practices 100. SEO reports ~65 in non-production builds purely because of the intentional `noindex`. Verified at 390, 430, 768, 1440, and 2560px: no horizontal overflow; hero works by keyboard, click, and swipe; reduced motion removes the drift; the mobile menu traps focus and returns it on close.
+Latest results (Lighthouse, mobile emulation with real throttling): home — Performance 92, Accessibility 100, Best Practices 100, LCP 1.8s, CLS 0.01; dog profile — Performance 97; breedings — 98; about — 98. SEO reports ~65 in non-production builds purely because of the intentional `noindex`.
+
+Verified across 65 page and viewport combinations at 390, 430, 768, 1440, and 2560px: no horizontal overflow anywhere, no broken images, exactly one `h1` per page, no undersized controls. The hero responds to keyboard, click and swipe, pauses when the visitor takes over, and drops its drift under reduced motion. The header floats over the photography and becomes a blurred bar past 24px of scroll. The mobile menu traps focus, closes on Escape, returns focus to the button that opened it, and leaves the page behind it unreachable.
+
+### Business facts that must be confirmed before launch
+
+The phone number, email address and Instagram handle rendered in the footer, on `/about` and on `/contact` were migrated from the kennel's current public profile and live in `src/lib/site.ts`. They are audit items V10 and V11: confirm them, and decide whether the aol address is replaced by a domain address, before the site goes live. `src/content/dogs.ts` and `src/content/breedings.ts` carry the same caveat for every dog fact and both pairings.
