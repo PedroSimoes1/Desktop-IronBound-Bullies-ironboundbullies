@@ -55,7 +55,9 @@ export const photos = {
   shadow01: photo("shadow-01", shadow01, "Shadow, a blue tri Exotic Bully, facing the camera in front of daffodils", { x: 0.47, y: 0.62 }, { x: 0.47, y: 0.62 }),
   shadow02: photo("shadow-02", shadow02, "Shadow in profile on grass with daffodils behind", { x: 0.35, y: 0.68 }, { x: 0.45, y: 0.66 }),
   minnie01: photo("minnie-01", minnie01, "Minnie, a blue tri Exotic Bully, standing on a leash by the water", { x: 0.45, y: 0.6 }, { x: 0.45, y: 0.62 }),
-  minnie02: photo("minnie-02", minnie02, "Minnie in profile beside a tree at the lake", { x: 0.55, y: 0.56 }, { x: 0.55, y: 0.58 }),
+  // The portrait anchor sits well right of centre on purpose: the handler's
+  // legs occupy the left of this frame and a square crop must start past them.
+  minnie02: photo("minnie-02", minnie02, "Minnie in profile beside a tree at the lake", { x: 0.55, y: 0.56 }, { x: 0.66, y: 0.55 }),
   missy01: photo("missy-01", missy01, "Missy standing on grass, tongue out, looking at the camera", { x: 0.42, y: 0.55 }, { x: 0.45, y: 0.55 }),
   missy02: photo("missy-02", missy02, "Missy standing on grass in sunlight, looking at the camera", { x: 0.4, y: 0.52 }, { x: 0.45, y: 0.52 }),
 } as const;
