@@ -25,10 +25,10 @@ export const durations = {
   fast: 150,
   base: 250,
   slow: 600,
-  hero: 1200,
-  heroDrift: 8000,
-  /** How long each dog stays on screen in the hero before advancing. */
-  heroDwell: 6500,
+  /** The hero cross-dissolve. Both photographs are on screen for this long. */
+  heroTransition: 1600,
+  /** One dog to the next, the dissolve included: each is fully alone for 6s. */
+  heroDwell: 7600,
 } as const;
 
 /** Media query strings, so components and styles agree. */
