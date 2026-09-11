@@ -1,4 +1,4 @@
-.section {
+.page {
   padding-block: var(--space-8) var(--section-y);
 }
 
@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  margin-bottom: var(--space-7);
+  margin-bottom: var(--space-8);
 }
 
 .lede {
@@ -21,7 +21,7 @@
 
 .filterList {
   display: flex;
-  gap: var(--space-5);
+  gap: var(--space-6);
   white-space: nowrap;
 }
 
@@ -30,7 +30,7 @@
   display: inline-flex;
   align-items: center;
   min-height: var(--touch-target);
-  color: var(--color-fg-muted);
+  color: var(--color-fg-subtle);
   transition: color var(--duration-fast) var(--ease-out);
 }
 
@@ -39,9 +39,9 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 8px;
+  bottom: 10px;
   height: 1px;
-  background-color: var(--color-accent);
+  background-color: var(--color-accent-fg);
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform var(--duration-base) var(--ease-out);
@@ -59,32 +59,109 @@
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-7) var(--gutter);
+}
+
+/* ---------------------------------------------------------------------------
+   ROSTER — the dogs we do not yet hold a photograph of. Named, linked, and
+   composed as type rather than as a row of empty frames.
+   -------------------------------------------------------------------------- */
+.roster {
+  margin-top: var(--space-9);
+  padding-top: var(--space-6);
+  border-top: var(--border-hairline);
+}
+
+.rosterTitle {
+  margin-bottom: var(--space-6);
+  color: var(--color-fg-muted);
+}
+
+.rosterList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6) var(--gutter);
+}
+
+.rosterEntry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  color: var(--color-fg-subtle);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.rosterEntry:hover,
+.rosterEntry:focus-visible {
+  color: var(--color-fg-muted);
+}
+
+.rosterName {
+  color: var(--color-fg);
+}
+
+.rosterMeta {
+  color: inherit;
 }
 
 .empty {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: var(--space-4);
   padding-block: var(--space-8);
   border-top: var(--border-hairline);
 }
 
+/* Column counts are fixed classes rather than a custom property in repeat():
+   a grid with one or two photographs narrows instead of stretching a single
+   frame across the whole page. */
 @media (min-width: 640px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
+  .cols1 {
+    max-width: 50%;
+  }
+
+  .cols2,
+  .cols3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rosterList {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1024px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
+  .cols1 {
+    max-width: 33.333%;
   }
-}
 
-@media (min-width: 1600px) {
-  .grid {
-    grid-template-columns: repeat(4, 1fr);
+  .cols2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 66.666%;
+  }
+
+  /* Six tracks so a card can be two, three, or six of them wide: three square
+     frames per row, and a last row of one or two wider frames that closes it. */
+  .cols3 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .cols3 > li {
+    grid-column: span 2;
+  }
+
+  .cols3 > li[data-span="3"] {
+    grid-column: span 3;
+  }
+
+  .cols3 > li[data-span="6"] {
+    grid-column: span 6;
+  }
+
+  .rosterList {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-7);
   }
 }

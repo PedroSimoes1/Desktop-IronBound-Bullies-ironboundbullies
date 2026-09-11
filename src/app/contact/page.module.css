@@ -1,4 +1,4 @@
-.section {
+.page {
   padding-block: var(--space-8) var(--section-y);
 }
 
@@ -6,18 +6,24 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  margin-bottom: var(--space-7);
+  margin-bottom: var(--space-8);
 }
 
 .lede {
   max-width: 48ch;
 }
 
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-8) var(--space-9);
+  align-items: start;
+}
+
 .form {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-5) var(--gutter);
-  max-width: 48rem;
 }
 
 .full {
@@ -28,8 +34,63 @@
   margin-top: var(--space-3);
 }
 
+.holding {
+  max-width: 44ch;
+}
+
+/* The direct channels: always on the page, whether or not the form can send. */
+.direct {
+  padding-top: var(--space-6);
+  border-top: var(--border-hairline);
+}
+
+.directTitle {
+  margin-bottom: var(--space-6);
+}
+
+.directList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.directList li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.directLabel {
+  color: var(--color-fg-subtle);
+}
+
+.directLink {
+  display: inline-block;
+  width: fit-content;
+  color: var(--color-fg);
+  border-bottom: 1px solid var(--color-line-strong);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.directLink:hover {
+  border-bottom-color: var(--color-accent-fg);
+}
+
 @media (min-width: 640px) {
   .form {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  }
+
+  .direct {
+    border-top: 0;
+    padding-top: 0;
+    padding-left: var(--space-7);
+    border-left: var(--border-hairline);
   }
 }

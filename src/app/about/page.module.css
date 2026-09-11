@@ -1,0 +1,103 @@
+.page {
+  padding-bottom: var(--section-y);
+}
+
+/* A single wide frame. 16:9 keeps the lettering composited into the right of
+   this photograph inside the crop; anything wider would clip it. */
+.banner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: 78dvh;
+  overflow: hidden;
+  background-color: var(--color-surface);
+}
+
+.bannerImage {
+  object-fit: cover;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+  padding-block: var(--space-8) 0;
+  max-width: 52ch;
+}
+
+.statement {
+  max-width: 34ch;
+}
+
+.prose {
+  max-width: 52ch;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.contact {
+  margin-top: var(--space-9);
+  padding-top: var(--space-6);
+  border-top: var(--border-hairline);
+}
+
+.contactTitle {
+  margin-bottom: var(--space-6);
+}
+
+.channels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+}
+
+.channels li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.channelLabel {
+  color: var(--color-fg-subtle);
+}
+
+.channelLink {
+  display: inline-block;
+  width: fit-content;
+  color: var(--color-fg);
+  border-bottom: 1px solid var(--color-line-strong);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.channelLink:hover {
+  border-bottom-color: var(--color-accent-fg);
+}
+
+.contactAction {
+  margin-top: var(--space-7);
+}
+
+@media (min-width: 640px) {
+  .channels {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gutter);
+  }
+}
+
+@media (min-width: 1024px) {
+  .banner {
+    aspect-ratio: 16 / 9;
+  }
+
+  .body {
+    padding-block: var(--space-9) 0;
+    margin-left: 8.333%;
+  }
+}

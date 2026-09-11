@@ -23,6 +23,13 @@
   background-color: var(--color-surface);
 }
 
+/* 5:4 rather than 3:2. It is the tightest frame that still fills a wide grid
+   cell, and on the two landscape photographs it crops out a handler standing
+   at the edge without touching the dog or the lettering. */
+.wide .frame {
+  aspect-ratio: 5 / 4;
+}
+
 .image {
   object-fit: cover;
   transform: scale(1);
@@ -31,46 +38,48 @@
 
 .card:hover .image,
 .card:focus-visible .image {
-  transform: scale(1.02);
+  transform: scale(1.03);
 }
 
 .placeholder {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
-  border: var(--border-hairline);
-  color: var(--color-fg-subtle);
+  background-color: var(--color-surface);
 }
 
 .body {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  padding-bottom: var(--space-3);
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
 }
 
 .name {
   color: var(--color-fg);
 }
 
+/* Meta and status share one line: colour on the left, opportunity on the right. */
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
 .meta {
   color: var(--color-fg-muted);
 }
 
-.status {
-  margin-top: var(--space-1);
-}
-
-/* Amber hairline that draws in on hover — the card's only "lift". */
+/* Amber hairline that draws in on hover: the card's only "lift". */
 .rule {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
   height: 1px;
-  background-color: var(--color-accent);
+  background-color: var(--color-accent-fg);
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform var(--duration-base) var(--ease-out);

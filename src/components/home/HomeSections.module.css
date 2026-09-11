@@ -1,54 +1,243 @@
-.about {
+/* ---------------------------------------------------------------------------
+   STATEMENT — the page's h1, indented into the right two thirds on desktop.
+   -------------------------------------------------------------------------- */
+.statement {
   padding-block: var(--section-y);
   border-top: var(--border-hairline);
 }
 
-.aboutInner {
+/* Widths in rem, not ch: a ch is measured in the inherited text face and
+   collapses the display type into a narrow column. */
+.statementInner {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: var(--space-5);
-  max-width: var(--container-text);
+  max-width: 30rem;
 }
 
-.aboutActions {
-  margin-top: var(--space-2);
+@media (min-width: 1024px) {
+  .statementInner {
+    margin-left: 30%;
+    max-width: 46rem;
+  }
+
+  .statementInner > :global(.lede) {
+    max-width: 30rem;
+  }
 }
 
-.contact {
+/* ---------------------------------------------------------------------------
+   BREEDINGS — two pairings set as type, on the raised ground.
+   -------------------------------------------------------------------------- */
+.breedings {
   padding-block: var(--section-y);
-  border-top: var(--border-hairline);
   background-color: var(--color-surface);
 }
 
-.contactInner {
+.breedingsHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-5);
+  margin-bottom: var(--space-7);
+}
+
+.plates {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-7);
+}
+
+.plate {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-line-strong);
+  color: var(--color-fg);
+  transition: border-color var(--duration-base) var(--ease-out);
+}
+
+.plate:hover,
+.plate:focus-visible {
+  border-top-color: var(--color-accent-fg);
+}
+
+.pairing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.cross {
+  color: var(--color-fg-subtle);
+}
+
+.headline {
+  color: var(--color-fg-muted);
+}
+
+.plate:hover .headline {
+  color: var(--color-fg);
+}
+
+@media (min-width: 768px) {
+  .plates {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gutter);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   FEMALES — one photograph beside the roster.
+   -------------------------------------------------------------------------- */
+.females {
+  padding-block: var(--section-y);
+}
+
+.femalesGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-7);
+  align-items: start;
+}
+
+/* Square, not landscape: the wide frame this photograph was shot in includes
+   the handler, and only a square crop starts past him. */
+.femalesMedia {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background-color: var(--color-surface);
+}
+
+.femalesImage {
+  object-fit: cover;
+}
+
+.femalesBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-6);
+}
+
+/* Eight names in two columns. No rule under every row: the spacing groups them. */
+.roster {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5) var(--gutter);
+  width: 100%;
+}
+
+.rosterEntry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  color: var(--color-fg-muted);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.rosterEntry:hover,
+.rosterEntry:focus-visible {
+  color: var(--color-fg);
+}
+
+.rosterName {
+  color: var(--color-fg);
+}
+
+.rosterMeta {
+  color: inherit;
+}
+
+@media (min-width: 1024px) {
+  .femalesGrid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--space-9);
+  }
+
+  .roster {
+    gap: var(--space-6) var(--space-7);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   CLOSING — availability and the one way to ask.
+   -------------------------------------------------------------------------- */
+.closing {
+  padding-block: var(--section-y);
+  background-color: var(--color-surface);
+}
+
+.closingHead {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
 }
 
-.contactCopy {
+.closingCopy {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  max-width: var(--container-text);
 }
 
-.contactActions {
+.closingLede {
+  max-width: 42ch;
+  text-wrap: pretty;
+}
+
+.closingPhone {
+  margin: 0;
+}
+
+/* Vertical padding on an inline link does not change the line box but does
+   enlarge the tap area, which matters for a phone number on a phone. */
+.phoneLink {
+  padding-block: var(--space-2);
+  color: var(--color-fg-muted);
+  border-bottom: 1px solid var(--color-line-strong);
+  transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+}
+
+.phoneLink:hover {
+  color: var(--color-fg);
+  border-bottom-color: var(--color-accent-fg);
+}
+
+.closingActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.closingButtons {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
 }
 
-@media (max-width: 639px) {
-  .contactActions > * {
-    flex: 1 1 100%;
+.closingGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-7) var(--gutter);
+  margin-top: var(--space-8);
+}
+
+@media (min-width: 640px) {
+  .closingGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1024px) {
-  .contactInner {
+  .closingHead {
     flex-direction: row;
     align-items: flex-end;
     justify-content: space-between;
+    gap: var(--space-8);
   }
 }
