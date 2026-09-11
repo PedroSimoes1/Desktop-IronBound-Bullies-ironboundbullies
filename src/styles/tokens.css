@@ -118,11 +118,30 @@
   --duration-fast: 150ms;    /* hover, focus */
   --duration-base: 250ms;    /* reveals, filter changes, menu */
   --duration-slow: 600ms;    /* gallery open/close */
-  --duration-hero: 1200ms;   /* hero crossfade */
-  --duration-hero-drift: 8000ms; /* hero scale 1.00 → 1.04 */
+
+  /* HERO CROSS-DISSOLVE.
+     The outgoing photograph holds at full opacity underneath while the incoming
+     one fades in on top, so the two always sum to exactly 1 and the composite
+     never dips toward the black page beneath. Both photographs are on screen
+     together for the whole transition. */
+  --duration-hero-transition: 1600ms;  /* the dissolve itself */
+  --duration-hero-transition-reduced: 320ms; /* the same dissolve under prefers-reduced-motion */
+  --duration-hero-dwell: 7600ms;       /* one dog to the next, transition included */
+  --duration-hero-settle: 7600ms;      /* the incoming photograph easing from --hero-scale-enter to 1 */
+  --duration-hero-copy-out: 360ms;     /* the name leaving */
+  --delay-hero-copy-out: 100ms;        /* a beat after the photograph starts changing, never before */
+  --duration-hero-copy-in: 720ms;      /* the name arriving */
+  --delay-hero-copy-in: 820ms;         /* arrives once the new photograph is past halfway */
+
+  /* Photographic drift. Both values are deliberately small enough to be felt
+     rather than seen; anything larger reads as a Ken Burns effect. */
+  --hero-scale-enter: 1.035;  /* where an arriving photograph starts */
+  --hero-scale-exit: 1.025;   /* where a departing photograph drifts to */
+  --hero-blur-enter: 1.2px;   /* focus pull on the arriving photograph only */
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);   /* the one curve for UI */
-  --ease-hero: cubic-bezier(0.4, 0, 0.2, 1);    /* carousel only */
+  --ease-hero-fade: cubic-bezier(0.45, 0.05, 0.55, 0.95); /* near-linear: a dissolve should not accelerate */
+  --ease-hero-settle: cubic-bezier(0.16, 1, 0.3, 1);      /* long decelerating settle */
 
   /* ---------------------------------------------------------------------------
      FOCUS + LAYERS

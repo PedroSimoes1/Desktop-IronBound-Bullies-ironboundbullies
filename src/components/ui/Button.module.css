@@ -9,7 +9,9 @@
   justify-content: center;
   gap: var(--space-2);
   min-height: var(--control-height);
-  padding: 0 var(--space-5);
+  /* Overridable so a cramped row can buy itself a little width without every
+     button on the site changing shape. */
+  padding: 0 var(--button-padding-x, var(--space-5));
   border: 1px solid var(--_border);
   border-radius: var(--radius-none);
   background-color: var(--_bg);
