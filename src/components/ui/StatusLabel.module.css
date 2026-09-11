@@ -1,27 +1,11 @@
 .status {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--color-fg-muted);
+  display: inline-block;
+  color: var(--color-fg-subtle);
   white-space: nowrap;
 }
 
-.marker {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  background-color: var(--color-fg-subtle);
-  flex: none;
-}
-
+/* A live opportunity. The amber is the site's only accent and this is one of
+   the three places it is allowed to appear. */
 .active {
-  color: var(--color-fg);
-}
-
-.active .marker {
-  background-color: var(--color-accent);
-}
-
-.struck {
-  color: var(--color-fg-subtle);
+  color: var(--color-accent-fg);
 }
