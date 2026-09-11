@@ -131,6 +131,16 @@ hr {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+
+  /* The one documented exception. A cross-dissolve is a change of opacity: it
+     carries no movement, no parallax and no scaling, so there is nothing in it
+     that can provoke the discomfort this preference exists to prevent. Cutting
+     hard between two full-bleed photographs is jarring for everyone, so
+     elements marked data-dissolve keep a short fade. Everything that genuinely
+     moves is still switched off above. */
+  [data-dissolve] {
+    transition-duration: var(--duration-hero-transition-reduced) !important;
+  }
 }
 
 /* Visually hidden but available to screen readers. */

@@ -101,8 +101,9 @@ export const motionSpecimens = [
   ["--duration-fast", "150 ms", "Hover, focus"],
   ["--duration-base", "250 ms", "Reveals, filters, menu"],
   ["--duration-slow", "600 ms", "Gallery open / close, card image scale"],
-  ["--duration-hero", "1200 ms", "Hero crossfade"],
-  ["--duration-hero-drift", "8000 ms", "Hero scale 1.00 to 1.04"],
+  ["--duration-hero-transition", "1600 ms", "Hero cross-dissolve"],
+  ["--duration-hero-dwell", "7600 ms", "One dog to the next"],
+  ["--duration-hero-settle", "7600 ms", "Arriving photograph easing to its true size"],
   ["--ease-out", "cubic-bezier(0.22, 1, 0.36, 1)", "Every UI transition"],
   ["--ease-hero", "cubic-bezier(0.4, 0, 0.2, 1)", "Carousel only"],
 ] as const;

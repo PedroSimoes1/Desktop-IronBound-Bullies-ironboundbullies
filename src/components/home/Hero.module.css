@@ -21,47 +21,87 @@
   background-color: var(--color-bg);
   touch-action: pan-y; /* vertical scrolling stays native; horizontal swipes are ours */
   user-select: none;
+  isolation: isolate; /* the slide stack gets its own layer context */
 }
 
+/* ---------------------------------------------------------------------------
+   THE DISSOLVE
+
+   Every painted photograph targets opacity 1. Only the arriving one animates,
+   fading in over the one below it, which holds at full opacity until it is
+   covered. The two therefore always sum to 1 and the black page never shows
+   through the middle of the transition.
+
+   Leaving the stack is instantaneous rather than animated: by then the layer is
+   underneath an opaque photograph, so there is nothing to see.
+   -------------------------------------------------------------------------- */
 .slide {
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity var(--duration-hero) var(--ease-hero);
+  visibility: hidden;
+  transition: opacity 0s linear;
   --focal: var(--focal-portrait);
   --fit: cover;
+  --hero-scale: var(--hero-scale-enter);
+  --hero-blur: var(--hero-blur-enter);
+  --hero-scale-duration: var(--duration-hero-transition);
+  --hero-scale-ease: var(--ease-hero-settle);
 }
 
-.slide[data-active] {
+.slide[data-layer] {
   opacity: 1;
+  visibility: visible;
+  transition: opacity var(--duration-hero-transition) var(--ease-hero-fade);
+  will-change: opacity;
+}
+
+/* The dog on screen: settles from fractionally large and fractionally soft to
+   its true size over several seconds. Most of that movement happens while the
+   photograph is arriving; by the time it has the screen it is almost still. */
+.slide[data-layer="top"] {
+  --hero-scale: 1;
+  --hero-blur: 0px;
+  --hero-scale-duration: var(--duration-hero-settle);
+  --hero-scale-ease: var(--ease-hero-settle);
+}
+
+/* The dog being replaced: keeps drifting outward as it goes, so the two
+   photographs move in opposite directions and the change reads as depth rather
+   than as a swap. It is never blurred, which would open a soft transparent edge
+   at a moment when it is still the only thing on screen. */
+.slide[data-layer="under"] {
+  --hero-scale: var(--hero-scale-exit);
+  --hero-blur: 0px;
+  --hero-scale-duration: var(--duration-hero-transition);
+  --hero-scale-ease: var(--ease-out);
 }
 
 .image {
   object-fit: var(--fit);
   object-position: var(--focal);
-  transform: scale(1);
+  transform: scale(var(--hero-scale));
   transform-origin: var(--focal);
-  transition: transform var(--duration-hero-drift) linear;
+  filter: blur(var(--hero-blur));
+  /* Transitions always start from the value on screen, so interrupting a
+     dissolve halfway never jumps: it simply changes direction. */
+  transition:
+    transform var(--hero-scale-duration) var(--hero-scale-ease),
+    filter var(--duration-hero-transition) var(--ease-hero-fade);
+}
+
+.slide[data-layer="top"] .image {
   will-change: transform;
 }
 
-/* The active photograph drifts from 1.00 to 1.04 over eight seconds; it eases back just as slowly while fading out. */
-.slide[data-active] .image {
-  transform: scale(1.04);
-}
+/* ---------------------------------------------------------------------------
+   COPY
 
-/* Reduced motion: no drift, quick fade instead of a slow crossfade. */
-.reducedMotion .slide {
-  transition: opacity 300ms var(--ease-out);
-}
-
-.reducedMotion .image,
-.reducedMotion .slide[data-active] .image {
-  transform: none;
-  transition: none;
-  will-change: auto;
-}
-
+   The name leaves before the new photograph is dominant and the next name
+   arrives after it is, so the two never cross over each other. The block is
+   given one height by always rendering the descriptor line, so nothing below it
+   moves between dogs.
+   -------------------------------------------------------------------------- */
 .column {
   grid-area: column;
   /* The dog's name is sized against this column, not the viewport, so a long
@@ -75,6 +115,7 @@
 }
 
 .copy {
+  position: relative;
   display: flex;
   flex-direction: column;
 }
@@ -84,35 +125,54 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-4);
-  animation: heroCopyIn 600ms var(--ease-out) both;
 }
 
-.reducedMotion .copyInner {
-  animation-duration: 200ms;
+/* The outgoing name is lifted out of the flow so the arriving one defines the
+   height, and it takes no clicks while it fades. */
+.copyLeaving {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  pointer-events: none;
+  animation: heroCopyLeave var(--duration-hero-copy-out) var(--ease-out) var(--delay-hero-copy-out) both;
 }
 
-@keyframes heroCopyIn {
+.copyArriving {
+  animation: heroCopyArrive var(--duration-hero-copy-in) var(--ease-out) var(--delay-hero-copy-in) both;
+}
+
+@keyframes heroCopyLeave {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
+@keyframes heroCopyArrive {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translate3d(0, 12px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
-/* Two class selectors so this beats .display-hero's viewport-based size. The
-   name is measured against its own column, not the window: at 20cqw a name as
-   long as KNUCKLES fills about three quarters of the column at every width and
-   never runs into the photograph. */
 .copyInner .name {
   font-size: clamp(4.5rem, 20cqw, 9rem);
   max-width: 100%;
   color: var(--color-fg);
 }
 
+/* Holds its line whether or not the dog has a verified descriptor. */
 .descriptor {
+  min-height: 1.2em;
   color: var(--color-fg-muted);
 }
 
@@ -125,7 +185,47 @@
   margin-top: var(--space-2);
 }
 
-/* Controls: previous, indicators, next, pause. Geometric, no icon library. */
+/* On a phone the two calls to action fit one row by a few pixels with the real
+   text face and miss it with the metric fallback, so the row broke in two while
+   the font was loading and the controls below jumped by 60px on every cold
+   load. Tighter padding here buys about 25px of headroom, which holds at 360px
+   wide in either font. */
+@media (max-width: 639px) {
+  .actions {
+    --button-padding-x: var(--space-4);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   REDUCED MOTION
+
+   A cross-dissolve is not motion: nothing travels, nothing scales, nothing can
+   provoke vestibular discomfort. So the photographs still dissolve, briefly,
+   rather than cutting. Everything that actually moves is removed.
+   -------------------------------------------------------------------------- */
+.reducedMotion .slide[data-layer] {
+  transition-duration: var(--duration-hero-transition-reduced);
+}
+
+.reducedMotion .image {
+  transform: none;
+  filter: none;
+  transition: none;
+  will-change: auto;
+}
+
+.reducedMotion .copyLeaving,
+.reducedMotion .copyArriving {
+  animation: none;
+}
+
+.reducedMotion .copyLeaving {
+  opacity: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   CONTROLS — previous, indicators, next, pause. Geometric, no icon library.
+   -------------------------------------------------------------------------- */
 .controls {
   display: flex;
   align-items: center;
