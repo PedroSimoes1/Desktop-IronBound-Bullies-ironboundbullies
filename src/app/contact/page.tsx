@@ -71,16 +71,16 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
               </p>
             ) : (
               <div className={styles.form} role="group" aria-label="Inquiry form (preview, not yet connected)">
-                <Field label="Name" required>
+                <Field label="Name" requirement="required">
                   {(ids) => <Input {...ids} name="name" autoComplete="name" />}
                 </Field>
-                <Field label="Email" required>
+                <Field label="Email" requirement="required">
                   {(ids) => <Input {...ids} type="email" name="email" autoComplete="email" inputMode="email" />}
                 </Field>
                 <Field label="Phone" hint="Only needed if you prefer a call or a text.">
                   {(ids) => <Input {...ids} type="tel" name="phone" autoComplete="tel" inputMode="tel" />}
                 </Field>
-                <Field label="Preferred contact" required>
+                <Field label="Preferred contact" requirement="required">
                   {(ids) => (
                     <Select {...ids} name="preferredContact" defaultValue="email">
                       {Object.entries(CONTACT_METHOD_LABELS).map(([value, label]) => (
@@ -91,7 +91,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
                     </Select>
                   )}
                 </Field>
-                <Field label="Inquiry type" required>
+                <Field label="Inquiry type" requirement="required">
                   {(ids) => (
                     <Select {...ids} name="type" defaultValue={defaultType}>
                       {Object.entries(INQUIRY_TYPE_LABELS).map(([value, label]) => (
@@ -128,7 +128,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
                   )}
                 </Field>
                 <div className={styles.full}>
-                  <Field label="Message" required>
+                  <Field label="Message" requirement="required">
                     {(ids) => <Textarea {...ids} name="message" />}
                   </Field>
                 </div>

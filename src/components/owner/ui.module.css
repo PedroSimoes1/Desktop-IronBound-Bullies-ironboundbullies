@@ -1,0 +1,67 @@
+.screenTitle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.screenTitleRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.lede {
+  max-width: 46ch;
+}
+
+.panel {
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+  background-color: var(--color-surface);
+  border: var(--border-hairline);
+}
+
+.panelQuiet {
+  background-color: transparent;
+}
+
+.panelTitle {
+  display: block;
+  margin-bottom: var(--space-4);
+  color: var(--color-fg-subtle);
+}
+
+.figure {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.figureValue {
+  color: var(--color-fg);
+}
+
+.figureLabel {
+  color: var(--color-fg-muted);
+}
+
+.note {
+  color: var(--color-fg-muted);
+  text-wrap: pretty;
+}
+
+.noteAttention {
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--color-accent);
+  color: var(--color-fg);
+}
+
+.privateMark {
+  display: inline-block;
+  padding: 2px var(--space-2);
+  background-color: var(--color-surface-raised);
+  color: var(--color-fg-subtle);
+  border-radius: var(--radius-sm);
+}

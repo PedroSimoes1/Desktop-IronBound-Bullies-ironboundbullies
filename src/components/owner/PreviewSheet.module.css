@@ -1,0 +1,147 @@
+/* No `display` here on purpose. A <dialog> is display:none until it is open,
+   and setting a display value on the element itself overrides that, leaving a
+   full-screen opaque panel sitting invisibly over the page and swallowing every
+   tap. The layout belongs on [open]. */
+.sheet {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  overscroll-behavior: contain;
+}
+
+.sheet[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.sheet::backdrop {
+  background-color: rgba(8, 8, 8, 0.7);
+}
+
+.sheet[open] {
+  animation: sheetIn var(--duration-base) var(--ease-out);
+}
+
+@keyframes sheetIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--owner-bar-height);
+  padding-inline: var(--gutter);
+  border-bottom: var(--border-hairline);
+}
+
+.barTitle {
+  color: var(--color-fg-subtle);
+}
+
+.close {
+  display: inline-grid;
+  place-items: center;
+  width: var(--touch-target);
+  height: var(--touch-target);
+  margin-right: calc(var(--space-3) * -1);
+}
+
+.closeIcon,
+.closeIcon::before,
+.closeIcon::after {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  background-color: var(--color-fg);
+}
+
+.closeIcon {
+  position: relative;
+  background-color: transparent;
+}
+
+.closeIcon::before,
+.closeIcon::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+
+.closeIcon::before {
+  transform: rotate(45deg);
+}
+
+.closeIcon::after {
+  transform: rotate(-45deg);
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6) var(--gutter) var(--space-8);
+  max-width: 52rem;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.intro {
+  color: var(--color-fg-muted);
+  max-width: 44ch;
+  margin-bottom: var(--space-7);
+}
+
+.block + .block {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: var(--border-hairline);
+}
+
+.blockTitle {
+  display: block;
+  margin-bottom: var(--space-5);
+  color: var(--color-fg-subtle);
+}
+
+.cardFrame {
+  max-width: 20rem;
+}
+
+.profileBits {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.profileName {
+  color: var(--color-fg);
+}
+
+.profileSummary {
+  max-width: 40ch;
+  margin-top: var(--space-1);
+}
+
+.footer {
+  flex: none;
+  padding: var(--space-4) var(--gutter) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  border-top: var(--border-hairline);
+  background-color: var(--color-surface);
+}

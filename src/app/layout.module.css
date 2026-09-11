@@ -17,6 +17,11 @@
   }
 }
 
+/* The owner area brings its own bar at every width. */
+.main:has(> [data-owner-app]) {
+  padding-top: 0;
+}
+
 /* Keyboard users: first Tab press reveals a link straight to the content. */
 .skipLink {
   position: absolute;

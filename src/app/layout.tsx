@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { displayFont, textFont, textFontItalic } from "./fonts";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteChrome } from "@/components/site/SiteChrome";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { isProduction, site } from "@/lib/site";
 import "@/styles/globals.css";
@@ -36,11 +37,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <a href="#main" className={styles.skipLink}>
           Skip to content
         </a>
-        <SiteHeader />
-        <main id="main" className={styles.main}>
-          {children}
-        </main>
-        <SiteFooter />
+        {/* The header and footer are rendered here on the server and handed to
+            SiteChrome, which leaves them out in the owner area. */}
+        <SiteChrome header={<SiteHeader />} footer={<SiteFooter />}>
+          <main id="main" className={styles.main}>
+            {children}
+          </main>
+        </SiteChrome>
       </body>
     </html>
   );

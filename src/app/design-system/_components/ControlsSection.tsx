@@ -85,16 +85,16 @@ export function FormsSection() {
     >
       {/* A group, not a <form>: this specimen must never submit anywhere. */}
       <div className={styles.formGrid} role="group" aria-label="Specimen form (does not submit)">
-        <Field label="Name" required>
+        <Field label="Name" requirement="required">
           {(ids) => <Input {...ids} name="name" autoComplete="name" />}
         </Field>
-        <Field label="Email" required error="Enter an email address like name@example.com">
+        <Field label="Email" requirement="required" error="Enter an email address like name@example.com">
           {(ids) => <Input {...ids} type="email" name="email" autoComplete="email" defaultValue="pedro@" />}
         </Field>
         <Field label="Phone" hint="Used only if you choose phone or text as your preferred contact.">
           {(ids) => <Input {...ids} type="tel" name="phone" autoComplete="tel" inputMode="tel" />}
         </Field>
-        <Field label="Inquiry type" required>
+        <Field label="Inquiry type" requirement="required">
           {(ids) => (
             <Select {...ids} name="type" defaultValue="stud_service">
               {Object.entries(INQUIRY_TYPE_LABELS).map(([value, label]) => (
@@ -106,7 +106,7 @@ export function FormsSection() {
           )}
         </Field>
         <div className={styles.formFull}>
-          <Field label="Message" required>
+          <Field label="Message" requirement="required">
             {(ids) => <Textarea {...ids} name="message" />}
           </Field>
         </div>

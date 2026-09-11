@@ -97,6 +97,11 @@
   --header-height: 4rem;             /* 64 at rest */
   --header-height-compact: 3.25rem;  /* 52 once scrolled */
 
+  /* Owner area. A phone-first tool: a slim bar at the top and a thumb-reachable
+     bar at the bottom, with the safe area added underneath. */
+  --owner-bar-height: 3.5rem;        /* 56 */
+  --owner-nav-height: 4rem;          /* 64, plus the device's safe area */
+
   --touch-target: 3rem;  /* 48: minimum tap size on mobile */
   --control-height: 3rem;          /* buttons + inputs */
   --control-height-compact: 2.75rem; /* 44: desktop nav buttons */
