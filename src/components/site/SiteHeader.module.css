@@ -90,14 +90,22 @@
   transition: transform var(--duration-base) var(--ease-out);
 }
 
-.navLink:hover,
 .navLink[aria-current="page"] {
   color: var(--color-fg);
 }
 
-.navLink:hover::after,
 .navLink[aria-current="page"]::after {
   transform: scaleX(1);
+}
+
+@media (hover: hover) {
+  .navLink:hover {
+    color: var(--color-fg);
+  }
+
+  .navLink:hover::after {
+    transform: scaleX(1);
+  }
 }
 
 .actions {
@@ -217,9 +225,14 @@
   transition: color var(--duration-fast) var(--ease-out);
 }
 
-.menuLink:hover,
 .menuLink[aria-current="page"] {
   color: var(--color-fg);
+}
+
+@media (hover: hover) {
+  .menuLink:hover {
+    color: var(--color-fg);
+  }
 }
 
 .menuCta {
@@ -238,8 +251,25 @@
   transition: color var(--duration-fast) var(--ease-out);
 }
 
-.menuContactLink:hover {
-  color: var(--color-fg);
+@media (hover: hover) {
+  .menuContactLink:hover {
+    color: var(--color-fg);
+  }
+}
+
+/* The menu only ever opens on a touch screen, and these three are how a
+   visitor on a phone actually reaches the kennel. A 27px line of text is not
+   a target: the rows take the gap that used to separate them and become one. */
+@media (pointer: coarse) {
+  .menuContact {
+    gap: 0;
+  }
+
+  .menuContactLink {
+    display: flex;
+    align-items: center;
+    min-height: var(--touch-target);
+  }
 }
 
 @media (min-width: 1024px) {

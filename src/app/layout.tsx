@@ -28,6 +28,15 @@ export const viewport: Viewport = {
   colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
+  /**
+   * When the Android soft keyboard opens, shrink the layout viewport rather
+   * than only the visual one. Without this, Chrome's default leaves anything
+   * positioned against the bottom of the screen sitting behind the keyboard,
+   * which on the owner screens means the Publish button disappears the moment
+   * you start typing. iOS ignores this property, so the approved iPhone
+   * behaviour is unchanged.
+   */
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

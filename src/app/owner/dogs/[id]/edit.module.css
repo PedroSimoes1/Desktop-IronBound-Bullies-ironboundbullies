@@ -16,8 +16,10 @@
   transform: rotate(-45deg);
 }
 
-.back:hover {
-  color: var(--color-fg);
+@media (hover: hover) {
+  .back:hover {
+    color: var(--color-fg);
+  }
 }
 
 .head {
@@ -94,8 +96,10 @@
   transition: background-color var(--duration-fast) var(--ease-out);
 }
 
-.choice:hover {
-  background-color: var(--color-surface-raised);
+@media (hover: hover) {
+  .choice:hover {
+    background-color: var(--color-surface-raised);
+  }
 }
 
 .choice:has(.radio:checked) {

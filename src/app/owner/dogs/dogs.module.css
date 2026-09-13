@@ -26,9 +26,14 @@
   transition: background-color var(--duration-fast) var(--ease-out);
 }
 
-.row:hover,
 .row:focus-visible {
   background-color: var(--color-surface);
+}
+
+@media (hover: hover) {
+  .row:hover {
+    background-color: var(--color-surface);
+  }
 }
 
 .row:active {

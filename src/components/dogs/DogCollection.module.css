@@ -47,14 +47,22 @@
   transition: transform var(--duration-base) var(--ease-out);
 }
 
-.filter:hover,
 .filter[aria-current="page"] {
   color: var(--color-fg);
 }
 
-.filter:hover::after,
 .filter[aria-current="page"]::after {
   transform: scaleX(1);
+}
+
+@media (hover: hover) {
+  .filter:hover {
+    color: var(--color-fg);
+  }
+
+  .filter:hover::after {
+    transform: scaleX(1);
+  }
 }
 
 .grid {
@@ -92,9 +100,14 @@
   transition: color var(--duration-fast) var(--ease-out);
 }
 
-.rosterEntry:hover,
 .rosterEntry:focus-visible {
   color: var(--color-fg-muted);
+}
+
+@media (hover: hover) {
+  .rosterEntry:hover {
+    color: var(--color-fg-muted);
+  }
 }
 
 .rosterName {

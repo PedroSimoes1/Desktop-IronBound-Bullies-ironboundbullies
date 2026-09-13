@@ -242,9 +242,11 @@
   transition: color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
 }
 
-.arrow:hover,
-.playToggle:hover {
-  color: var(--color-fg);
+@media (hover: hover) {
+  .arrow:hover,
+  .playToggle:hover {
+    color: var(--color-fg);
+  }
 }
 
 .arrow:active,
@@ -321,8 +323,10 @@
   transition: background-color var(--duration-fast) var(--ease-out);
 }
 
-.indicator:hover::after {
-  background-color: var(--color-fg-muted);
+@media (hover: hover) {
+  .indicator:hover::after {
+    background-color: var(--color-fg-muted);
+  }
 }
 
 .indicator[aria-current="true"]::after {

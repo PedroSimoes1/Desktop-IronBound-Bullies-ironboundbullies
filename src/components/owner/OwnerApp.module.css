@@ -1,6 +1,27 @@
 .app {
   min-height: 100dvh;
   background-color: var(--color-bg);
+  /* Enough room below a focused field to clear the unpublished-changes bar in
+     its tallest state. Read by the global scroll-margin rule. */
+  --scroll-margin-bottom: 10rem;
+}
+
+/* While the soft keyboard is up there is very little screen left, and the
+   section tabs are not what you are reaching for mid-sentence. Hiding them
+   returns 64px to the part you are actually reading. The bar is fixed, so
+   nothing reflows. Touch devices only: a mouse opens no keyboard. */
+@media (pointer: coarse) {
+  .app:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea):focus) {
+    /* Zeroing the token rather than hiding the bar alone means everything
+       measured against the tabs closes the gap with them: the unpublished
+       changes bar drops to sit directly on the keyboard, where your thumb
+       already is. */
+    --owner-nav-height: 0px;
+  }
+
+  .app:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea):focus) .nav {
+    display: none;
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -95,8 +116,10 @@
   transition: color var(--duration-fast) var(--ease-out);
 }
 
-.signOut:hover {
-  color: var(--color-fg);
+@media (hover: hover) {
+  .signOut:hover {
+    color: var(--color-fg);
+  }
 }
 
 /* ---------------------------------------------------------------------------

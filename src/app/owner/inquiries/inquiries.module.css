@@ -73,8 +73,10 @@
     background-color var(--duration-fast) var(--ease-out);
 }
 
-.state:hover {
-  color: var(--color-fg);
+@media (hover: hover) {
+  .state:hover {
+    color: var(--color-fg);
+  }
 }
 
 .state[aria-pressed="true"] {

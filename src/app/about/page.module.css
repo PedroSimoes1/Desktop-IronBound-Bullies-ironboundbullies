@@ -76,8 +76,18 @@
   transition: border-color var(--duration-fast) var(--ease-out);
 }
 
-.channelLink:hover {
-  border-bottom-color: var(--color-accent-fg);
+@media (hover: hover) {
+  .channelLink:hover {
+    border-bottom-color: var(--color-accent-fg);
+  }
+}
+
+/* Padding cancelled by a negative margin: a 48px target, the text unmoved. */
+@media (pointer: coarse) {
+  .channelLink {
+    padding-block: 10px;
+    margin-block: -10px;
+  }
 }
 
 .contactAction {
