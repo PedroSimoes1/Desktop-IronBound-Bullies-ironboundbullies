@@ -1,0 +1,285 @@
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-target);
+  color: var(--color-fg-muted);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.back::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-top: 1.5px solid currentColor;
+  border-left: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+}
+
+@media (hover: hover) {
+  .back:hover {
+    color: var(--color-fg);
+  }
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: var(--space-3) 0 var(--space-6);
+}
+
+.headPhoto {
+  position: relative;
+  flex: none;
+  width: 5.5rem;
+  height: 5.5rem;
+  overflow: hidden;
+  background-color: var(--color-surface);
+  display: grid;
+  place-items: center;
+}
+
+.headImage {
+  object-fit: cover;
+}
+
+.headEmpty {
+  color: var(--color-fg-subtle);
+  font-size: 10px;
+}
+
+.headText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.headName {
+  color: var(--color-fg);
+}
+
+.headMeta {
+  color: var(--color-fg-muted);
+}
+
+.stateLive {
+  color: var(--color-fg-subtle);
+}
+
+.statePending {
+  color: var(--color-accent-fg);
+  font-weight: var(--weight-text-semibold);
+}
+
+/* ---------------------------------------------------------------------------
+   AVAILABILITY — the reason most visits happen. Full-width rows, thumb-sized.
+   -------------------------------------------------------------------------- */
+.choices {
+  display: flex;
+  flex-direction: column;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3);
+  margin-inline: calc(var(--space-3) * -1);
+  min-height: var(--touch-target);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .choice:hover {
+    background-color: var(--color-surface-raised);
+  }
+}
+
+.choice:has(.radio:checked) {
+  background-color: var(--color-surface-raised);
+}
+
+.choice:has(.radio:focus-visible) {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.radio {
+  flex: none;
+  width: 1.35rem;
+  height: 1.35rem;
+  accent-color: var(--color-accent);
+}
+
+/* The chosen row is taller, so its label keeps the radio centred against both
+   lines rather than drifting to the middle of the block. */
+.choice:has(.radio:checked) {
+  align-items: flex-start;
+  padding-block: var(--space-4);
+}
+
+.choice:has(.radio:checked) .radio {
+  margin-top: 2px;
+}
+
+.choiceBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.choiceLabel {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-text-medium);
+  color: var(--color-fg);
+}
+
+.choice:has(.radio:checked) .choiceLabel {
+  color: var(--color-accent-fg);
+}
+
+.choiceHelp {
+  color: var(--color-fg-muted);
+}
+
+.currently {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: var(--border-hairline);
+  color: var(--color-fg-muted);
+}
+
+.currently strong {
+  color: var(--color-fg);
+  font-weight: var(--weight-text-semibold);
+}
+
+/* ---------------------------------------------------------------------------
+   OTHER FIELDS
+   -------------------------------------------------------------------------- */
+.money {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-height: var(--touch-target);
+  color: var(--color-fg-muted);
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-top: 3px;
+  accent-color: var(--color-accent);
+}
+
+.photoCount {
+  margin-bottom: var(--space-3);
+}
+
+.photoAction {
+  margin-top: var(--space-4);
+}
+
+.privateHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.privateHint {
+  color: var(--color-fg-muted);
+}
+
+/* ---------------------------------------------------------------------------
+   ACTION BAR — appears only while something is unpublished, and sits above the
+   navigation so a thumb reaches Publish without covering the screen.
+   -------------------------------------------------------------------------- */
+.actionBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--owner-nav-height) + env(safe-area-inset-bottom, 0px));
+  z-index: calc(var(--z-header) - 1);
+  background-color: var(--color-surface-raised);
+  border-top: 1px solid var(--color-accent);
+  animation: barIn var(--duration-base) var(--ease-out);
+}
+
+@keyframes barIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.actionBarInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 52rem;
+  margin-inline: auto;
+  padding: var(--space-4) var(--gutter);
+}
+
+.actionHint {
+  color: var(--color-accent-fg);
+}
+
+.failed {
+  color: var(--color-fg);
+}
+
+.actionButtons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.actionButtons > :last-child {
+  margin-left: auto;
+}
+
+.saved {
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+  background-color: var(--color-surface);
+  border-left: 2px solid var(--color-accent);
+  color: var(--color-fg-muted);
+}
+
+.saved strong {
+  color: var(--color-fg);
+}
+
+@media (min-width: 560px) {
+  .actionBarInner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .actionStatus {
+    flex: 1;
+  }
+}

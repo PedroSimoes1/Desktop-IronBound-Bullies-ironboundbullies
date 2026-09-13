@@ -23,11 +23,21 @@ interface FieldProps {
   label: string;
   hint?: string;
   error?: string;
-  required?: boolean;
+  /**
+   * Whether to say if this field has to be filled in.
+   *
+   * A visitor filling in the inquiry form needs to know which fields are
+   * compulsory before they start typing, so that form marks every field. An
+   * owner editing a dog does not: each field already holds a value, there is
+   * no single submit that can be rejected for a blank, and "optional" on every
+   * row is just noise. Those screens pass "none".
+   */
+  requirement?: "required" | "optional" | "none";
   children: (ids: FieldControlIds) => ReactNode;
 }
 
-export function Field({ label, hint, error, required, children }: FieldProps) {
+export function Field({ label, hint, error, requirement = "optional", children }: FieldProps) {
+  const required = requirement === "required";
   const id = useId();
   const hintId = hint ? `${id}-hint` : undefined;
   const errorId = error ? `${id}-error` : undefined;
@@ -37,14 +47,13 @@ export function Field({ label, hint, error, required, children }: FieldProps) {
     <div className={[styles.field, error ? styles.hasError : ""].filter(Boolean).join(" ")}>
       <label htmlFor={id} className={["label", styles.label].join(" ")}>
         {label}
-        {required ? (
+        {requirement === "required" && (
           <span className={styles.required} aria-hidden="true">
             {" "}
             *
           </span>
-        ) : (
-          <span className={styles.optional}> · optional</span>
         )}
+        {requirement === "optional" && <span className={styles.optional}> · optional</span>}
       </label>
       {children({
         id,

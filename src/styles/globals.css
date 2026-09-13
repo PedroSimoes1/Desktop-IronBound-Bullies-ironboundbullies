@@ -86,6 +86,36 @@ textarea {
   letter-spacing: inherit;
 }
 
+/* ---------------------------------------------------------------------------
+   TOUCH — Android Chrome specifics that do not apply to a mouse.
+   -------------------------------------------------------------------------- */
+
+/* Android paints a translucent grey block over anything you tap. On a black
+   photographic page it reads as a rendering fault. Removed here, and every
+   control keeps its own :active and :focus-visible state, so a tap still
+   gives feedback. */
+a,
+button,
+label,
+summary,
+[role="button"],
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* When a field is focused the browser scrolls it into view. Left alone it
+   scrolls the field to the very edge of the viewport, which on a phone means
+   underneath the keyboard or behind a bar pinned to the bottom. These margins
+   tell it to leave room. */
+input,
+select,
+textarea,
+[contenteditable] {
+  scroll-margin-block: var(--space-7) var(--scroll-margin-bottom, var(--space-7));
+}
+
 button {
   background: none;
   border: 0;

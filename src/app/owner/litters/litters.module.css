@@ -1,0 +1,35 @@
+.pairing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.parent {
+  font-family: var(--font-display-stack);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-display);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-display);
+  line-height: 1;
+  color: var(--color-fg);
+}
+
+.cross {
+  font-family: var(--font-display-stack);
+  font-size: var(--text-xl);
+  color: var(--color-fg-subtle);
+}
+
+.headline {
+  margin-top: var(--space-3);
+}
+
+.count {
+  margin-top: var(--space-3);
+  color: var(--color-fg-subtle);
+}
+
+.action {
+  margin-top: var(--space-5);
+}

@@ -1,0 +1,233 @@
+.app {
+  min-height: 100dvh;
+  background-color: var(--color-bg);
+  /* Enough room below a focused field to clear the unpublished-changes bar in
+     its tallest state. Read by the global scroll-margin rule. */
+  --scroll-margin-bottom: 10rem;
+}
+
+/* While the soft keyboard is up there is very little screen left, and the
+   section tabs are not what you are reaching for mid-sentence. Hiding them
+   returns 64px to the part you are actually reading. The bar is fixed, so
+   nothing reflows. Touch devices only: a mouse opens no keyboard. */
+@media (pointer: coarse) {
+  .app:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea):focus) {
+    /* Zeroing the token rather than hiding the bar alone means everything
+       measured against the tabs closes the gap with them: the unpublished
+       changes bar drops to sit directly on the keyboard, where your thumb
+       already is. */
+    --owner-nav-height: 0px;
+  }
+
+  .app:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea):focus) .nav {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   PROTOTYPE NOTICE
+   -------------------------------------------------------------------------- */
+/* Deliberately not sticky. The top bar below it already follows the thumb, and
+   two pinned strips would eat ~110px of an iPhone screen before any content. */
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--gutter);
+  background-color: var(--color-surface-raised);
+  border-bottom: 1px solid var(--color-accent);
+  color: var(--color-fg-muted);
+}
+
+.noticeText {
+  max-width: 62ch;
+}
+
+.noticeStrong {
+  color: var(--color-accent-fg);
+  font-weight: var(--weight-text-semibold);
+}
+
+.failToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-target);
+  color: var(--color-fg-muted);
+  cursor: pointer;
+}
+
+.failToggle input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--color-accent);
+}
+
+/* ---------------------------------------------------------------------------
+   TOP BAR
+   -------------------------------------------------------------------------- */
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  height: var(--owner-bar-height);
+  padding-inline: var(--gutter);
+  /* Solid, not frosted. Translucent chrome is a public-site flourish; here it
+     only lets the page ghost through the one strip that has to stay legible. */
+  background-color: var(--color-bg);
+  border-bottom: var(--border-hairline);
+}
+
+.brand,
+.signInBrand {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.brandName {
+  font-family: var(--font-display-stack);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-display-heavy);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-display);
+  color: var(--color-fg);
+}
+
+.brandRole {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-text-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-accent-fg);
+}
+
+.signOut {
+  min-height: var(--touch-target);
+  padding-inline: var(--space-2);
+  margin-right: calc(var(--space-2) * -1);
+  color: var(--color-fg-muted);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .signOut:hover {
+    color: var(--color-fg);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   SCREEN + BOTTOM NAV
+   -------------------------------------------------------------------------- */
+.screen {
+  padding: var(--space-6) var(--gutter) calc(var(--owner-nav-height) + var(--space-9));
+  max-width: 52rem;
+  margin-inline: auto;
+}
+
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-header);
+  background-color: var(--color-bg);
+  border-top: var(--border-hairline);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.navList {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 52rem;
+  margin-inline: auto;
+}
+
+.navLink {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: var(--owner-nav-height);
+  padding-inline: var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-text-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+/* The amber rule sits on top of the bar, where the eye reads it as a tab. */
+.navLink::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--color-accent-fg);
+  transform: scaleX(0);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.navLink[aria-current="page"] {
+  color: var(--color-fg);
+}
+
+.navLink[aria-current="page"]::before {
+  transform: scaleX(1);
+}
+
+.navLink:active {
+  color: var(--color-fg);
+}
+
+/* ---------------------------------------------------------------------------
+   SIGN IN
+   -------------------------------------------------------------------------- */
+.signIn {
+  display: grid;
+  place-items: center;
+  min-height: calc(100dvh - 5rem);
+  padding: var(--space-8) var(--gutter);
+}
+
+.signInInner {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-5);
+  width: 100%;
+  max-width: 24rem;
+}
+
+.signInBrand {
+  justify-content: flex-start;
+}
+
+.signInTitle {
+  margin-top: var(--space-2);
+}
+
+.signInLede {
+  max-width: 34ch;
+}
+
+.signInForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+@media (min-width: 640px) {
+  .screen {
+    padding-inline: var(--space-6);
+  }
+}

@@ -39,3 +39,19 @@
   font-weight: 600;
   letter-spacing: 0.04em;
 }
+
+/* ---------------------------------------------------------------------------
+   TOUCH TARGET
+   Display type sits tight to its own cap height, so the wordmark's box is
+   shorter than the letters look: 24px in the header. Where it is a link home
+   that is not a thumb-sized target. Padding grows the box and a negative
+   margin of the same size puts the letters back exactly where they were, so
+   the target is real geometry rather than an overlay a later sibling can
+   paint over.
+   -------------------------------------------------------------------------- */
+@media (pointer: coarse) {
+  a.wordmark {
+    padding-block: 12px;
+    margin-block: -12px;
+  }
+}

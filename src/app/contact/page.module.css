@@ -72,8 +72,21 @@
   transition: border-color var(--duration-fast) var(--ease-out);
 }
 
-.directLink:hover {
-  border-bottom-color: var(--color-accent-fg);
+@media (hover: hover) {
+  .directLink:hover {
+    border-bottom-color: var(--color-accent-fg);
+  }
+}
+
+/* The underline has to stay on the text, so the target grows by padding that a
+   negative margin cancels: the text does not move, the box does. 10px each way
+   makes 48px and takes only half the gap to the next channel, so neighbouring
+   targets never overlap. */
+@media (pointer: coarse) {
+  .directLink {
+    padding-block: 10px;
+    margin-block: -10px;
+  }
 }
 
 @media (min-width: 640px) {

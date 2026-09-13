@@ -36,9 +36,14 @@
   transition: transform var(--duration-slow) var(--ease-out);
 }
 
-.card:hover .image,
 .card:focus-visible .image {
   transform: scale(1.03);
+}
+
+@media (hover: hover) {
+  .card:hover .image {
+    transform: scale(1.03);
+  }
 }
 
 .placeholder {
@@ -85,9 +90,14 @@
   transition: transform var(--duration-base) var(--ease-out);
 }
 
-.card:hover .rule,
 .card:focus-visible .rule {
   transform: scaleX(1);
+}
+
+@media (hover: hover) {
+  .card:hover .rule {
+    transform: scaleX(1);
+  }
 }
 
 .card:focus-visible {

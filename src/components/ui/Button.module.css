@@ -48,10 +48,16 @@
   --_border: var(--color-fg);
 }
 
-.primary:hover,
 .primary:focus-visible {
   --_bg: var(--color-bg);
   --_fg: var(--color-fg);
+}
+
+@media (hover: hover) {
+  .primary:hover {
+    --_bg: var(--color-bg);
+    --_fg: var(--color-fg);
+  }
 }
 
 /* SECONDARY: outlined. Hover fills. */
@@ -61,10 +67,16 @@
   --_border: var(--color-fg);
 }
 
-.secondary:hover,
 .secondary:focus-visible {
   --_bg: var(--color-fg);
   --_fg: var(--color-bg);
+}
+
+@media (hover: hover) {
+  .secondary:hover {
+    --_bg: var(--color-fg);
+    --_fg: var(--color-bg);
+  }
 }
 
 /* TEXT: a hairline under the whole label that warms to amber on hover. */
@@ -84,14 +96,22 @@
     color var(--duration-fast) var(--ease-out);
 }
 
-.text:hover,
 .text:focus-visible {
   color: var(--color-fg);
 }
 
-.text:hover .label,
 .text:focus-visible .label {
   border-bottom-color: var(--color-accent-fg);
+}
+
+@media (hover: hover) {
+  .text:hover {
+    color: var(--color-fg);
+  }
+
+  .text:hover .label {
+    border-bottom-color: var(--color-accent-fg);
+  }
 }
 
 .compact {

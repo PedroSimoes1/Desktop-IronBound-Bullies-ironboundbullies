@@ -1,0 +1,46 @@
+.figures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5) var(--space-4);
+}
+
+.panelAction {
+  margin-top: var(--space-5);
+}
+
+.pending {
+  display: flex;
+  flex-direction: column;
+}
+
+.pending li + li {
+  border-top: var(--border-hairline);
+}
+
+.pendingLink {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-block: var(--space-3);
+  min-height: var(--touch-target);
+  justify-content: center;
+}
+
+.pendingName {
+  font-family: var(--font-display-stack);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-display);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-display);
+  color: var(--color-fg);
+}
+
+.pendingHint {
+  color: var(--color-accent-fg);
+}
+
+@media (min-width: 520px) {
+  .figures {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

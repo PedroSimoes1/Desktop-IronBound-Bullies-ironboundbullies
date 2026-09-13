@@ -47,8 +47,27 @@
   transition: color var(--duration-fast) var(--ease-out);
 }
 
-.link:hover {
-  color: var(--color-fg);
+@media (hover: hover) {
+  .link:hover {
+    color: var(--color-fg);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   TOUCH TARGETS
+   32px rows are fine under a cursor and mean nothing to a thumb. On any touch
+   screen, phone or Android tablet, the rows become a full target and the gap
+   that separated them is absorbed into the rows themselves, so the type sits
+   where it always did with more room around it.
+   -------------------------------------------------------------------------- */
+@media (pointer: coarse) {
+  .links {
+    gap: 0;
+  }
+
+  .link {
+    min-height: var(--touch-target);
+  }
 }
 
 .legal {

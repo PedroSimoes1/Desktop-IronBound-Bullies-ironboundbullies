@@ -59,9 +59,14 @@
   transition: border-color var(--duration-base) var(--ease-out);
 }
 
-.plate:hover,
 .plate:focus-visible {
   border-top-color: var(--color-accent-fg);
+}
+
+@media (hover: hover) {
+  .plate:hover {
+    border-top-color: var(--color-accent-fg);
+  }
 }
 
 .pairing {
@@ -79,8 +84,10 @@
   color: var(--color-fg-muted);
 }
 
-.plate:hover .headline {
-  color: var(--color-fg);
+@media (hover: hover) {
+  .plate:hover .headline {
+    color: var(--color-fg);
+  }
 }
 
 @media (min-width: 768px) {
@@ -140,9 +147,14 @@
   transition: color var(--duration-fast) var(--ease-out);
 }
 
-.rosterEntry:hover,
 .rosterEntry:focus-visible {
   color: var(--color-fg);
+}
+
+@media (hover: hover) {
+  .rosterEntry:hover {
+    color: var(--color-fg);
+  }
 }
 
 .rosterName {
@@ -194,7 +206,8 @@
 }
 
 /* Vertical padding on an inline link does not change the line box but does
-   enlarge the tap area, which matters for a phone number on a phone. */
+   enlarge the tap area, which matters for a phone number on a phone. On a
+   touch screen it goes the rest of the way to a full 48px target. */
 .phoneLink {
   padding-block: var(--space-2);
   color: var(--color-fg-muted);
@@ -202,9 +215,17 @@
   transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
 }
 
-.phoneLink:hover {
-  color: var(--color-fg);
-  border-bottom-color: var(--color-accent-fg);
+@media (hover: hover) {
+  .phoneLink:hover {
+    color: var(--color-fg);
+    border-bottom-color: var(--color-accent-fg);
+  }
+}
+
+@media (pointer: coarse) {
+  .phoneLink {
+    padding-block: 13px;
+  }
 }
 
 .closingActions {
