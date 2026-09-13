@@ -19,10 +19,17 @@ import { isProduction } from "@/lib/site";
  * single real field is saved.
  */
 
-export const metadata: Metadata = {
-  title: "Owner",
-  robots: { index: false, follow: false },
-};
+/**
+ * On the live site this route is a 404, and a 404 should not announce what it
+ * is hiding. Setting a static title meant the production 404 page still came
+ * back titled "Owner · Ironbound Bullies", which tells anyone who tries the
+ * path that there is an owner area there. Only the deployments where the
+ * prototype actually renders name the page.
+ */
+export function generateMetadata(): Metadata {
+  if (isProduction) return { robots: { index: false, follow: false } };
+  return { title: "Owner", robots: { index: false, follow: false } };
+}
 
 export default function OwnerLayout({ children }: LayoutProps<"/owner">) {
   if (isProduction) notFound();
