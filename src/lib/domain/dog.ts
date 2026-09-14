@@ -107,6 +107,20 @@ export function formatMoney(cents: Cents): string {
   }).format(dollars);
 }
 
+/**
+ * Splits a list into the dogs we hold photographs of and the rest.
+ *
+ * The two halves are presented differently: photographs become picture cards,
+ * and the rest become a typographic roster. A grid of empty "photo coming"
+ * frames would say the site is unfinished, which is the opposite of the truth.
+ */
+export function splitByPhoto(list: Dog[]): { photographed: Dog[]; listed: Dog[] } {
+  return {
+    photographed: list.filter((dog) => dog.mainPhoto),
+    listed: list.filter((dog) => !dog.mainPhoto),
+  };
+}
+
 /** "Male" / "Female" for display. */
 export function formatSex(sex: Sex): string {
   return sex === "male" ? "Male" : "Female";

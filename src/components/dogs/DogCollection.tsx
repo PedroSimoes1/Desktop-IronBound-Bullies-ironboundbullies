@@ -2,8 +2,7 @@ import Link from "next/link";
 import { DogCard } from "@/components/dogs/DogCard";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { splitByPhoto } from "@/content/dogs";
-import type { Dog } from "@/lib/domain/dog";
+import { splitByPhoto, type Dog } from "@/lib/domain/dog";
 import { dogMeta } from "@/lib/domain/format";
 import styles from "./DogCollection.module.css";
 

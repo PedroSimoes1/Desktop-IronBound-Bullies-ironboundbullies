@@ -11,6 +11,11 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    // The maintenance scripts under scripts/ run on Node directly rather than
+    // through a bundler, and Node's ESM resolver requires the real ".ts" on a
+    // relative import. Nothing is emitted, so this only affects what the type
+    // checker will accept.
+    "allowImportingTsExtensions": true,
     "jsx": "react-jsx",
     "incremental": true,
     "plugins": [

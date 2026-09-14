@@ -15,6 +15,13 @@ import missy02 from "@/photos/missy-02.jpg";
 /**
  * The photograph library for Stage 2.
  *
+ * NO LONGER THE SOURCE OF TRUTH. The website reads these records from
+ * Postgres (src/db/queries/public.ts). This file is kept for two reasons:
+ * `npm run db:import` reads it to seed a fresh database, and the owner
+ * prototype still uses it for demo data until the real editing screens
+ * replace it. Editing it changes neither the live site nor the preview.
+
+ *
  * Every entry is a real Ironbound Bullies photograph; identities come from the
  * name printed in the image (see docs/image-inventory.md). Focal points were
  * set by hand from the inventory and checked with crop simulations:
