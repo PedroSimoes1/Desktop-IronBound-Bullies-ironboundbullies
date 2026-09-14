@@ -11,17 +11,26 @@
     "typecheck": "next typegen && tsc --noEmit",
     "fonts": "python3 tools/fonts/build_fonts.py",
     "lint:copy": "node scripts/check-copy.mjs",
-    "photos": "python3 tools/photos/prepare_photos.py"
+    "photos": "python3 tools/photos/prepare_photos.py",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:import": "node --experimental-strip-types --no-warnings --import ./scripts/register-loader.mjs scripts/import-content.ts",
+    "db:local": "node scripts/local-postgres.mjs"
   },
   "dependencies": {
+    "drizzle-orm": "^0.45.2",
     "next": "16.3.4",
+    "postgres": "^3.4.9",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
     "typescript": "^5"
