@@ -16,7 +16,11 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "db:import": "node --experimental-strip-types --no-warnings --import ./scripts/register-loader.mjs scripts/import-content.ts",
-    "db:local": "node scripts/local-postgres.mjs"
+    "db:local": "node scripts/local-postgres.mjs",
+    "owner:create": "node --experimental-strip-types --no-warnings --import ./scripts/register-loader.mjs scripts/owner-account.ts create",
+    "owner:password": "node --experimental-strip-types --no-warnings --import ./scripts/register-loader.mjs scripts/owner-account.ts create",
+    "owner:list": "node --experimental-strip-types --no-warnings --import ./scripts/register-loader.mjs scripts/owner-account.ts list",
+    "test:e2e": "node tests/owner.e2e.mjs"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",
@@ -33,6 +37,7 @@
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
+    "playwright": "^1.56.0",
     "typescript": "^5"
   },
   "engines": {

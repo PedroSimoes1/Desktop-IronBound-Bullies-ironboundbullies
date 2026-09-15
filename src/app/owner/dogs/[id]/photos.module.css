@@ -1,0 +1,145 @@
+/* Photograph management. Thumbnails big enough to recognise the dog, controls
+   big enough to hit with a thumb. */
+
+.manager {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  gap: var(--space-4);
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.frame {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background-color: var(--color-surface);
+}
+
+.image {
+  object-fit: cover;
+}
+
+.mainFlag {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-bg);
+  color: var(--color-accent-fg);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.order {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.control {
+  display: grid;
+  place-items: center;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+  border: var(--border-hairline);
+  color: var(--color-fg-muted);
+  font-size: var(--text-base);
+}
+
+.control:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+@media (hover: hover) {
+  .control:not(:disabled):hover {
+    color: var(--color-fg);
+    border-color: var(--color-line-strong);
+  }
+}
+
+.textControl {
+  min-height: var(--touch-target);
+  padding-inline: var(--space-2);
+  color: var(--color-fg-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (hover: hover) {
+  .textControl:hover {
+    color: var(--color-fg);
+  }
+}
+
+.remove {
+  color: var(--color-fg-subtle);
+}
+
+/* ---------------------------------------------------------------------------
+   ADDING ONE
+   -------------------------------------------------------------------------- */
+.upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+  border-top: var(--border-hairline);
+}
+
+/* The real input is hidden but still focusable and still the thing that is
+   clicked, so the keyboard and the file picker both behave normally. */
+.chooser {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  padding: var(--space-3) var(--space-4);
+  border: 1px dashed var(--color-line-strong);
+  color: var(--color-fg-muted);
+  cursor: pointer;
+}
+
+.fileInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.chooser:focus-within {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.chooserLabel {
+  pointer-events: none;
+}
+
+.ok {
+  color: var(--color-fg-muted);
+}
+
+.error {
+  padding: var(--space-3) var(--space-4);
+  border-left: 2px solid var(--color-accent);
+  background-color: var(--color-surface);
+  color: var(--color-fg);
+}

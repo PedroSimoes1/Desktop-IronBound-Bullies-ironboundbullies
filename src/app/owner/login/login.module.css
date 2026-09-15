@@ -1,0 +1,68 @@
+/* Sign in. Same ground, same type, same restraint as the rest of the owner
+   area: it is the first screen the owner ever sees, so it sets the tone. */
+
+.page {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: var(--space-8) var(--gutter);
+  background-color: var(--color-bg);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 24rem;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.brandName {
+  font-family: var(--font-display-stack);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-display-heavy);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-display);
+  color: var(--color-fg);
+}
+
+.brandRole {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-text-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-accent-fg);
+}
+
+.title {
+  margin-bottom: var(--space-2);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.error {
+  padding: var(--space-3) var(--space-4);
+  border-left: 2px solid var(--color-accent);
+  background-color: var(--color-surface);
+  color: var(--color-fg);
+}
+
+.submit {
+  margin-top: var(--space-2);
+}
+
+.help {
+  color: var(--color-fg-subtle);
+  max-width: 38ch;
+}

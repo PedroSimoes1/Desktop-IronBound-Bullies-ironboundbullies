@@ -76,6 +76,131 @@ export const photoSourceEnum = pgEnum("photo_source", ["repo", "blob"]);
 /** Owner-side bookkeeping on an inquiry. */
 export const inquiryStateEnum = pgEnum("inquiry_state", ["new", "replied", "closed"]);
 
+/**
+ * What a signed-in person may do.
+ *
+ *   admin  runs the software: can create kennels and grant owners access.
+ *   owner  runs one kennel: can edit only the kennel they are a member of.
+ *
+ * A visitor with no account is neither and sees only published information.
+ * The role lives on the MEMBERSHIP, not the user, so the same person could one
+ * day own two kennels without the roles bleeding into each other.
+ */
+export const kennelRoleEnum = pgEnum("kennel_role", ["admin", "owner"]);
+
+/** ISO 4217. Stored explicitly so an amount is never ambiguous. */
+export const currencyEnum = pgEnum("currency", ["USD"]);
+
+/* ---------------------------------------------------------------------------
+   WHO OWNS WHAT
+
+   A kennel is the unit of ownership. Every dog and every photograph belongs to
+   exactly one, and every permission check in the application reduces to the
+   same question: is this person a member of the kennel that owns this row?
+   -------------------------------------------------------------------------- */
+
+export const kennels = pgTable(
+  "kennels",
+  {
+    id: text("id").primaryKey(),
+    slug: text("slug").notNull(),
+    name: text("name").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("kennels_slug_idx").on(table.slug)],
+);
+
+/**
+ * A person who can sign in.
+ *
+ * The password is never stored. What is stored is a scrypt hash with a random
+ * per-user salt, so two people with the same password have different hashes
+ * and a stolen database still does not hand over anyone's password.
+ */
+export const users = pgTable(
+  "users",
+  {
+    id: text("id").primaryKey(),
+    /** Lower-cased on the way in, so Pedro@x and pedro@x are one account. */
+    email: text("email").notNull(),
+    name: text("name"),
+    passwordHash: text("password_hash").notNull(),
+    passwordSalt: text("password_salt").notNull(),
+    /** Bumped when the password changes; every older session stops working. */
+    passwordVersion: integer("password_version").notNull().default(1),
+    disabled: boolean("disabled").notNull().default(false),
+    lastSignInAt: timestamp("last_sign_in_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("users_email_idx").on(table.email)],
+);
+
+/** Which kennels a person may act on, and as what. */
+export const memberships = pgTable(
+  "memberships",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    kennelId: text("kennel_id")
+      .notNull()
+      .references(() => kennels.id, { onDelete: "cascade" }),
+    role: kennelRoleEnum("role").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("memberships_user_kennel_idx").on(table.userId, table.kennelId),
+    index("memberships_user_idx").on(table.userId),
+  ],
+);
+
+/**
+ * A signed-in session.
+ *
+ * The browser holds a random token; the database holds only its SHA-256 hash,
+ * so reading this table does not let anyone impersonate a signed-in owner.
+ * Sessions live in the database rather than in a self-contained token so that
+ * signing out, or disabling an account, takes effect immediately instead of
+ * whenever the token happens to expire.
+ */
+export const sessions = pgTable(
+  "sessions",
+  {
+    id: text("id").primaryKey(),
+    tokenHash: text("token_hash").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    /** Must match the user's current passwordVersion, or the session is dead. */
+    passwordVersion: integer("password_version").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    lastSeenAt: timestamp("last_seen_at", { withTimezone: true }).notNull().defaultNow(),
+    userAgent: text("user_agent"),
+  },
+  (table) => [uniqueIndex("sessions_token_idx").on(table.tokenHash), index("sessions_user_idx").on(table.userId)],
+);
+
+/**
+ * Failed sign-in attempts, for throttling.
+ *
+ * Counted per email and per address, because either alone is easy to work
+ * around: one attacker trying a million passwords on one account, or a million
+ * accounts from one machine.
+ */
+export const signInAttempts = pgTable(
+  "sign_in_attempts",
+  {
+    id: text("id").primaryKey(),
+    email: text("email").notNull(),
+    ip: text("ip").notNull(),
+    succeeded: boolean("succeeded").notNull(),
+    at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("sign_in_attempts_email_idx").on(table.email, table.at), index("sign_in_attempts_ip_idx").on(table.ip, table.at)],
+);
+
 /* ---------------------------------------------------------------------------
    DOGS — what the public site shows. Every column is nullable except the two
    that identify the animal, because the business genuinely does not have most
@@ -86,6 +211,10 @@ export const dogs = pgTable(
   "dogs",
   {
     id: text("id").primaryKey(),
+    /** The kennel that owns this dog. Every permission check starts here. */
+    kennelId: text("kennel_id")
+      .notNull()
+      .references(() => kennels.id, { onDelete: "cascade" }),
     slug: text("slug").notNull(),
     name: text("name").notNull(),
 
@@ -117,6 +246,9 @@ export const dogs = pgTable(
     studFeeCents: integer("stud_fee_cents"),
     lockInFeeCents: integer("lock_in_fee_cents"),
     priceCents: integer("price_cents"),
+    /** Which currency every amount on this row is in. An amount without one is
+     *  a number pretending to be money. */
+    currency: currencyEnum("currency").notNull().default("USD"),
     contactForPrice: boolean("contact_for_price").notNull().default(false),
 
     featured: boolean("featured").notNull().default(false),
@@ -130,7 +262,7 @@ export const dogs = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex("dogs_slug_idx").on(table.slug),
+    uniqueIndex("dogs_slug_idx").on(table.kennelId, table.slug),
     index("dogs_role_idx").on(table.role),
     index("dogs_status_idx").on(table.status),
     index("dogs_sort_idx").on(table.sortOrder),
@@ -151,6 +283,8 @@ export const dogDrafts = pgTable("dog_drafts", {
     .primaryKey()
     .references(() => dogs.id, { onDelete: "cascade" }),
   fields: jsonb("fields").notNull().$type<Record<string, unknown>>(),
+  /** Who last touched it, so two people editing is legible rather than a mystery. */
+  updatedBy: text("updated_by").references(() => users.id, { onDelete: "set null" }),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -177,6 +311,12 @@ export const photos = pgTable(
   "photos",
   {
     id: text("id").primaryKey(),
+    /** Repeated from the dog rather than joined, so an upload or a delete can
+     *  be authorised without a join, and a photograph with no dog yet still
+     *  belongs to somebody. */
+    kennelId: text("kennel_id")
+      .notNull()
+      .references(() => kennels.id, { onDelete: "cascade" }),
     dogId: text("dog_id").references(() => dogs.id, { onDelete: "cascade" }),
 
     source: photoSourceEnum("source").notNull(),
@@ -198,6 +338,10 @@ export const photos = pgTable(
     focalPortraitX: numeric("focal_portrait_x", { precision: 4, scale: 3 }),
     focalPortraitY: numeric("focal_portrait_y", { precision: 4, scale: 3 }),
 
+    /** For an uploaded photograph: the object key inside the bucket, which is
+     *  what a delete needs. Null for repository photographs, whose file is
+     *  committed and is not ours to remove. */
+    storageKey: text("storage_key"),
     blurDataUrl: text("blur_data_url"),
     /** True when the photograph already carries the dog's name or a graphic,
      *  so the page knows not to print the name on top of it. */
@@ -221,6 +365,7 @@ export const photos = pgTable(
   },
   (table) => [
     index("photos_dog_idx").on(table.dogId),
+    index("photos_kennel_idx").on(table.kennelId),
     index("photos_order_idx").on(table.dogId, table.sortOrder),
     index("photos_hero_idx").on(table.heroSlot),
   ],
@@ -236,6 +381,9 @@ export const breedings = pgTable(
   "breedings",
   {
     id: text("id").primaryKey(),
+    kennelId: text("kennel_id")
+      .notNull()
+      .references(() => kennels.id, { onDelete: "cascade" }),
     slug: text("slug").notNull(),
 
     sireId: text("sire_id").references(() => dogs.id, { onDelete: "set null" }),
@@ -323,7 +471,27 @@ export const inquiryNotes = pgTable("inquiry_notes", {
    RELATIONS — how the tables join, for typed queries.
    -------------------------------------------------------------------------- */
 
+export const kennelsRelations = relations(kennels, ({ many }) => ({
+  dogs: many(dogs),
+  memberships: many(memberships),
+}));
+
+export const usersRelations = relations(users, ({ many }) => ({
+  memberships: many(memberships),
+  sessions: many(sessions),
+}));
+
+export const membershipsRelations = relations(memberships, ({ one }) => ({
+  user: one(users, { fields: [memberships.userId], references: [users.id] }),
+  kennel: one(kennels, { fields: [memberships.kennelId], references: [kennels.id] }),
+}));
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));
+
 export const dogsRelations = relations(dogs, ({ many, one }) => ({
+  kennel: one(kennels, { fields: [dogs.kennelId], references: [kennels.id] }),
   photos: many(photos),
   draft: one(dogDrafts, { fields: [dogs.id], references: [dogDrafts.dogId] }),
   note: one(dogNotes, { fields: [dogs.id], references: [dogNotes.dogId] }),

@@ -47,11 +47,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         {/* The header and footer are rendered here on the server and handed to
-            SiteChrome, which leaves them out in the owner area. */}
-        <SiteChrome header={<SiteHeader />} footer={<SiteFooter />}>
-          <main id="main" className={styles.main}>
-            {children}
-          </main>
+            SiteChrome, which leaves them out in the owner area and lets that
+            area open its own <main> instead. */}
+        <SiteChrome header={<SiteHeader />} footer={<SiteFooter />} mainClassName={styles.main}>
+          {children}
         </SiteChrome>
       </body>
     </html>

@@ -42,7 +42,21 @@ function pngSize(buf) {
 const alias = (specifier) =>
   specifier.startsWith("@/") ? pathToFileURL(path.resolve(process.cwd(), "src", specifier.slice(2))).href : null;
 
+/**
+ * "server-only" is a package whose whole job is to throw if it is imported
+ * anywhere but a server component, which is exactly the guard we want in the
+ * application. A maintenance script IS the server, so it is stubbed here
+ * rather than removed from the source, where it protects against a password
+ * hasher or a connection string being bundled into a browser.
+ */
+// A data: URL is a real URL, which the loader API requires, and it needs no
+// load hook of its own: it IS the module.
+const EMPTY_MODULE = "data:text/javascript,export%20%7B%7D%3B";
+
 export async function resolve(specifier, context, next) {
+  if (specifier === "server-only" || specifier === "client-only") {
+    return { url: EMPTY_MODULE, shortCircuit: true, format: "module" };
+  }
   if (IMAGE.test(specifier)) {
     const resolved = alias(specifier) ?? new URL(specifier, context.parentURL).href;
     return { url: resolved, shortCircuit: true, format: "module" };
