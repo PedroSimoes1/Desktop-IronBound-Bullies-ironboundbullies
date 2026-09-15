@@ -35,6 +35,10 @@ yarn-error.log*
 # ...except the template, which holds no secrets and documents the rest.
 !.env.example
 
+# photographs the owner uploads while developing. The real ones live in object
+# storage; these are a local stand-in and must never end up in the repository.
+.uploads
+
 # vercel
 .vercel
 
