@@ -42,12 +42,17 @@ async function loadContent(): Promise<Loaded> {
 /** Money, dates and numbers pass through untouched; undefined becomes NULL. */
 const orNull = <T>(v: T | undefined): T | null => (v === undefined ? null : v);
 
+/** The one kennel this site is for. Every dog, photograph and breeding belongs to it. */
+const KENNEL_ID = "ironbound";
+
 async function main() {
   const reset = process.argv.includes("--reset");
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set");
 
-  const sql = postgres(url, { max: 1 });
+  // prepare: false so this also works through a hosted database's pooler,
+  // which cannot remember a prepared statement between statements.
+  const sql = postgres(url, { max: 1, prepare: false });
   const { dogs, heroSlides, photos, breedings } = await loadContent();
 
   // Guard: never write over records that already exist unless asked to.
@@ -85,17 +90,30 @@ async function main() {
       await tx`delete from dogs`;
     }
 
+    /* The kennel every one of these records belongs to.
+     *
+     * Migration 0002 creates this row, so on an established database it is
+     * already here and this changes nothing. On a brand new one, which is what
+     * a fresh hosted database is, running the migrations and then importing
+     * used to fail on the first dog: kennel_id cannot be null and nothing had
+     * put a kennel there. Creating it here as well means the import stands on
+     * its own rather than depending on the order two separate commands ran in. */
+    await tx`
+      insert into kennels (id, slug, name)
+      values (${KENNEL_ID}, 'ironbound-bullies', 'Ironbound Bullies')
+      on conflict (id) do nothing`;
+
     // Dogs. Two passes: every row first, then the parent links, because a
     // sire may appear later in the list than the puppy that points at him.
     for (const [i, dog] of dogs.entries()) {
       await tx`
         insert into dogs (
-          id, slug, name, sex, role, status, breed, color, dog_class, date_of_birth,
+          id, kennel_id, slug, name, sex, role, status, breed, color, dog_class, date_of_birth,
           height_inches, weight_lbs, bloodline, registration, sire_name, dam_name,
           summary, description, temperament, stud_fee_cents, lock_in_fee_cents,
           price_cents, contact_for_price, featured, sort_order
         ) values (
-          ${dog.id}, ${dog.slug}, ${dog.name}, ${orNull(dog.sex)}, ${orNull(dog.role)},
+          ${dog.id}, ${KENNEL_ID}, ${dog.slug}, ${dog.name}, ${orNull(dog.sex)}, ${orNull(dog.role)},
           ${orNull(dog.status)}, ${orNull(dog.breed)}, ${orNull(dog.color)},
           ${orNull(dog.dogClass)}, ${orNull(dog.dateOfBirth)},
           ${orNull(dog.heightInches)}, ${orNull(dog.weightLbs)},
@@ -123,11 +141,11 @@ async function main() {
       if (!width || !height) throw new Error(`${p.id}: could not read the image dimensions`);
       await tx`
         insert into photos (
-          id, dog_id, source, src, width, height, alt,
+          id, kennel_id, dog_id, source, src, width, height, alt,
           focal_x, focal_y, focal_portrait_x, focal_portrait_y,
           has_embedded_text, caption, sort_order, is_main, hero_slot
         ) values (
-          ${p.id}, ${owner?.dogId ?? null}, 'repo', ${p.id}, ${width}, ${height}, ${p.alt},
+          ${p.id}, ${KENNEL_ID}, ${owner?.dogId ?? null}, 'repo', ${p.id}, ${width}, ${height}, ${p.alt},
           ${p.focal.x}, ${p.focal.y},
           ${p.focalPortrait?.x ?? null}, ${p.focalPortrait?.y ?? null},
           ${p.hasEmbeddedText ?? false}, ${orNull(p.caption)},
@@ -138,10 +156,10 @@ async function main() {
     for (const [i, b] of breedings.entries()) {
       await tx`
         insert into breedings (
-          id, slug, sire_id, dam_id, sire_name, dam_name, status, headline,
+          id, kennel_id, slug, sire_id, dam_id, sire_name, dam_name, status, headline,
           breeding_date, due_date, litter_date, notes, featured, sort_order
         ) values (
-          ${b.id}, ${b.slug}, ${orNull(b.sireId)}, ${orNull(b.damId)},
+          ${b.id}, ${KENNEL_ID}, ${b.slug}, ${orNull(b.sireId)}, ${orNull(b.damId)},
           ${orNull(b.sireName)}, ${orNull(b.damName)}, ${orNull(b.status)},
           ${orNull(b.headline)}, ${orNull(b.breedingDate)}, ${orNull(b.dueDate)},
           ${orNull(b.litterDate)}, ${orNull(b.notes)}, ${b.featured ?? false}, ${i}

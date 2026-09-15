@@ -33,6 +33,21 @@ function createClient() {
     max: process.env.VERCEL ? 1 : 10,
     idle_timeout: 20,
     connect_timeout: 10,
+    /**
+     * No prepared statements.
+     *
+     * A hosted Postgres is reached through a transaction pooler, which hands
+     * the connection to somebody else the moment a statement finishes. A
+     * prepared statement is remembered on one connection, so the next query
+     * that tries to use it lands somewhere that has never heard of it and
+     * fails with "prepared statement does not exist". It fails intermittently,
+     * under load, which is the worst way for anything to fail.
+     *
+     * The cost of turning them off is a few microseconds per query, and it is
+     * close to nothing here anyway: a serverless function answers one request
+     * and exits, so a prepared statement would almost never be reused.
+     */
+    prepare: false,
   });
 
   return drizzle(sql, { schema });

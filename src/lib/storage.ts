@@ -119,7 +119,7 @@ export async function deletePhotoFile(key: string): Promise<void> {
       const { url, serviceKey, bucket } = supabaseStorage();
       await fetch(`${url}/storage/v1/object/${bucket}/${key}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${serviceKey}` },
+        headers: supabaseHeaders(serviceKey),
       });
     }
   } catch (error) {
@@ -146,12 +146,25 @@ async function writeLocal(key: string, buf: Buffer): Promise<{ url: string; key:
   return { url: `/uploads/${key}`, key };
 }
 
+/**
+ * Both headers, deliberately.
+ *
+ * Supabase puts an API gateway in front of Storage. The gateway routes on
+ * `apikey` and Storage itself authorises on `Authorization`, so sending only
+ * one of them produces a 401 from whichever layer did not get what it wanted,
+ * with a message that does not say which. Supabase's own client sends both.
+ */
+const supabaseHeaders = (serviceKey: string) => ({
+  apikey: serviceKey,
+  Authorization: `Bearer ${serviceKey}`,
+});
+
 async function writeSupabase(key: string, buf: Buffer, contentType: string): Promise<{ url: string; key: string } | { error: string }> {
   const { url, serviceKey, bucket } = supabaseStorage();
   const response = await fetch(`${url}/storage/v1/object/${bucket}/${key}`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${serviceKey}`,
+      ...supabaseHeaders(serviceKey),
       "Content-Type": contentType,
       "Cache-Control": "public, max-age=31536000, immutable",
     },
@@ -162,10 +175,16 @@ async function writeSupabase(key: string, buf: Buffer, contentType: string): Pro
     const detail = await response.text().catch(() => "");
     console.error("supabase storage upload failed", response.status, detail);
     if (response.status === 404) {
-      return { error: `The storage bucket "${bucket}" does not exist yet. Create it in Supabase under Storage.` };
+      return { error: `The storage bucket "${bucket}" does not exist yet. Create it in Supabase under Storage, and tick Public bucket.` };
+    }
+    if (response.status === 401 || response.status === 403) {
+      return { error: "Storage refused the upload. SUPABASE_SERVICE_ROLE_KEY is wrong or belongs to another project." };
     }
     return { error: "The photograph could not be stored. Nothing was changed. Try again." };
   }
 
+  // This is the URL a public bucket serves. If the bucket was made private,
+  // it returns 400 and the picture silently never appears, so the bucket has
+  // to be public. The objects in it are photographs meant for the website.
   return { url: `${url}/storage/v1/object/public/${bucket}/${key}`, key };
 }

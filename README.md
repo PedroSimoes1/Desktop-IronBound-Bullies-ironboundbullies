@@ -104,10 +104,14 @@ For `DATABASE_URL` you can either paste the string from the hosted database, or 
 
 ```bash
 npm run db:local     # starts Postgres on port 5433 and prints the string to paste in
-npm run db:migrate   # creates the tables
-npm run db:import    # loads the dogs, photographs and breedings from src/content
+npm run db:setup     # migrations, then the dogs, then a summary of what is there
 npm run owner:create -- --email you@example.com --name "Your Name" --admin --generate
 ```
+
+`npm run db:setup` is the one to use against a **hosted** database too. It runs the migrations
+through the direct connection, imports the dogs only if the database is empty, and prints what
+it found. Running it twice is safe: the second run skips the import rather than putting the
+original descriptions and prices back over the owner's edits.
 
 The last command prints a password **once**. It is never stored anywhere readable, never passed on the command line, and never printed again: to change it, run the command again for the same email, which also signs that person out everywhere.
 
@@ -142,6 +146,25 @@ npm run test:e2e
 
 Point it at a development database, never the real one. It needs a browser the first time: `npx playwright install chromium`. Screenshots of every step land in `/tmp/owner-e2e`.
 
+`npm run test:storage` covers the other half: the Supabase storage driver, against a stand-in
+Supabase. Uploads in development go to a folder on disk, so the bucket path only wakes up on a
+deployed site; this checks the request we send is the right shape — method, path, both
+authorisation headers, content type, the exact bytes — and that a missing bucket and a wrong
+key each produce a message naming the actual problem. It needs no account and no network.
+
+### Photographs: what is drafted and what is not
+
+Descriptions, prices and availability are **drafted**: they are saved, they survive everything,
+and the website keeps showing the old values until Publish. Photographs are **not**. An upload
+appears on the website as soon as it finishes, and a removal disappears from it just as fast.
+
+That is deliberate for this milestone rather than an oversight. A photograph is either one the
+owner wants up or one he does not, and holding it in a draft would mean he could not see it on
+the real page before committing to it. If that turns out to be wrong in practice, photographs
+can join the draft cycle without changing anything else, because publishing already runs
+through one place. Deleting the main photograph promotes the next one automatically, so a
+published page is never left without a picture.
+
 ## Environments
 
 | | Where | Data | Photographs | Indexed by Google? |
@@ -158,12 +181,29 @@ Every variable is documented in `.env.example`. Real values live only in Vercel'
 
 | Variable | Where it is needed | What it is |
 |---|---|---|
-| `DATABASE_URL` | everywhere | the Postgres connection string. Use the **pooled** one |
+| `DATABASE_URL` | everywhere | the Postgres connection string. Use the **transaction pooler** (port 6543) |
+| `DIRECT_DATABASE_URL` | migrations only | the same database, **direct** (port 5432). Not needed on Vercel |
 | `SESSION_SECRET` | everywhere | a long random string. Changing it signs nobody out |
 | `PHOTO_STORAGE` | optional | `local` or `supabase`. Defaults correctly; `local` is refused when deployed |
-| `SUPABASE_URL` | Preview, Production | the project URL |
+| `SUPABASE_URL` | Preview, Production | the project URL. Also read at **build** time, so uploaded photographs render |
 | `SUPABASE_SERVICE_ROLE_KEY` | Preview, Production | server only. Never in a `NEXT_PUBLIC_` variable |
-| `SUPABASE_STORAGE_BUCKET` | optional | defaults to `dog-photos` |
+| `SUPABASE_STORAGE_BUCKET` | optional | defaults to `dog-photos`. The bucket must be **public** |
+
+### Two connection strings, and why
+
+A hosted Postgres gives you more than one way in, and they are not interchangeable.
+
+The **transaction pooler** (port 6543) hands the connection back the instant each statement
+finishes. That is what lets hundreds of short-lived serverless functions share a small
+connection limit, and it is what the website uses. Because it cannot hold anything open
+between statements, the driver runs with `prepare: false` — a prepared statement would be
+remembered on one connection and then looked for on another, which fails under load and
+nowhere else.
+
+The **direct connection** (port 5432) is one real connection held for as long as you need it.
+Migrations need that, because a migration is one transaction from beginning to end. So
+`DIRECT_DATABASE_URL` exists, and `npm run db:setup` refuses to run migrations through a
+pooled URL rather than letting you read a confusing error an hour later.
 
 `src/lib/env.ts` checks these at startup and reports **all** the missing ones at once, with the exact name and where to set it. It never quietly substitutes a default, because a site that appears to work on the wrong database is worse than one that refuses to start.
 

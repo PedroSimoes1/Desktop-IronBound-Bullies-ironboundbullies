@@ -20,7 +20,9 @@
     "owner:create": "node --experimental-strip-types --no-warnings --import ./scripts/register-loader.mjs scripts/owner-account.ts create",
     "owner:password": "node --experimental-strip-types --no-warnings --import ./scripts/register-loader.mjs scripts/owner-account.ts create",
     "owner:list": "node --experimental-strip-types --no-warnings --import ./scripts/register-loader.mjs scripts/owner-account.ts list",
-    "test:e2e": "node tests/owner.e2e.mjs"
+    "test:e2e": "node tests/owner.e2e.mjs",
+    "db:setup": "node scripts/setup-hosted-db.mjs",
+    "test:storage": "node --experimental-strip-types --no-warnings --import ./scripts/register-loader.mjs tests/storage.supabase.mjs"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",
