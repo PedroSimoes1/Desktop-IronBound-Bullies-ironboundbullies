@@ -39,7 +39,7 @@ function fail(missing: Missing[]): never {
     "  Vercel:             Project -> Settings -> Environment Variables.",
     "                      Tick Production, Preview AND Development, then redeploy.",
     "",
-    "  Full setup instructions are in README.md under 'Setting up the database'.",
+    "  Full setup instructions are in README.md under 'Environment variables'.",
     "",
   ];
   throw new Error(lines.join("\n"));
@@ -59,11 +59,26 @@ function required(name: string, why: string, where: string): string {
  * harder to read than the message above.
  */
 export function databaseUrl(): string {
-  return required(
+  const url = required(
     "DATABASE_URL",
     "the Postgres connection string",
     "Supabase: Project Settings -> Database -> Connection string -> Transaction pooler. Use the POOLED one.",
   );
+
+  /* The two things people actually paste by mistake: the project's API URL
+     (https://...) from the page above the one they wanted, and the whole psql
+     command line with the string buried in it. Both produce a connection error
+     ten minutes later that says nothing about either. */
+  if (!/^postgres(ql)?:\/\//.test(url.trim())) {
+    fail([
+      {
+        name: "DATABASE_URL",
+        why: `does not look like a Postgres connection string. It should begin with postgresql:// and this one begins with "${url.trim().slice(0, 12)}..."`,
+        where: "Supabase: Project Settings -> Database -> Connection string -> Transaction pooler. Copy the string itself, not the psql command or the API URL.",
+      },
+    ]);
+  }
+  return url.trim();
 }
 
 /**

@@ -1,5 +1,6 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import { databaseUrl } from "@/lib/env";
 import * as schema from "./schema";
 
 /**
@@ -12,6 +13,11 @@ import * as schema from "./schema";
  * One connection pool per process, reused across hot reloads in development so
  * a few hundred edits do not open a few hundred connections and exhaust the
  * database's limit.
+ *
+ * The connection string is read through lib/env, which is the only place that
+ * decides what a missing or wrong variable should say. This file used to print
+ * its own message telling the reader to edit .env.local, which is exactly the
+ * wrong advice when the build that failed was running on Vercel.
  */
 
 import "server-only";
@@ -21,14 +27,7 @@ declare global {
 }
 
 function createClient() {
-  const url = process.env.DATABASE_URL;
-  if (!url) {
-    throw new Error(
-      "DATABASE_URL is not set. Copy .env.example to .env.local and fill it in; see README.md for how to get the value.",
-    );
-  }
-
-  const sql = postgres(url, {
+  const sql = postgres(databaseUrl(), {
     // Serverless functions are short-lived and numerous, so each one holds the
     // smallest pool that still works rather than its own generous handful.
     max: process.env.VERCEL ? 1 : 10,
