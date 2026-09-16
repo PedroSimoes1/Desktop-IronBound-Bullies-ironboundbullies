@@ -4,6 +4,13 @@ import { photos } from "./photos";
 /**
  * Dog records for the public Version 1.
  *
+ * NO LONGER THE SOURCE OF TRUTH. The website reads these records from
+ * Postgres (src/db/queries/public.ts). This file is kept for two reasons:
+ * `npm run db:import` reads it to seed a fresh database, and the owner
+ * prototype still uses it for demo data until the real editing screens
+ * replace it. Editing it changes neither the live site nor the preview.
+
+ *
  * Source of every fact: the current public profile at
  * kenneldatabase.vercel.app/ironboundbullies (read 2026-09-09). Everything is
  * pending the owner's confirmation (Phase 0 audit items V1 to V8). Fields the

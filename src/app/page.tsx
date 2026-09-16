@@ -1,8 +1,15 @@
 import { Hero, type HeroSlide } from "@/components/home/Hero";
 import { StudsSection } from "@/components/home/StudsSection";
 import { BreedingsPreview, ClosingBand, FemalesPreview, KennelStatement } from "@/components/home/HomeSections";
-import { availableDogs, dogsByRole, featuredDogs, getDogBySlug, heroSlides } from "@/content/dogs";
-import { photos } from "@/content/photos";
+import {
+  getAvailableDogs,
+  getBreedings,
+  getDogs,
+  getDogsByRole,
+  getFeaturedDogs,
+  getHeroSlides,
+  requirePhotoById,
+} from "@/db/queries/public";
 import { dogDescriptor } from "@/lib/domain/format";
 
 /**
@@ -17,13 +24,26 @@ import { dogDescriptor } from "@/lib/domain/format";
  *
  * No photograph appears twice on the page.
  */
-export default function HomePage() {
-  const slides: HeroSlide[] = heroSlides.flatMap(({ slug, photo }) => {
-    const dog = getDogBySlug(slug);
-    return dog ? [{ slug, name: dog.name, descriptor: dogDescriptor(dog), photo }] : [];
-  });
+export default async function HomePage() {
+  // One pass for everything the page needs, so the six sections below are not
+  // six separate round trips to the database.
+  const [hero, studs, females, available, breedings, allDogs, femalePhoto] = await Promise.all([
+    getHeroSlides(),
+    getFeaturedDogs(),
+    getDogsByRole("female"),
+    getAvailableDogs(),
+    getBreedings(),
+    getDogs(),
+    requirePhotoById("minnie-02"),
+  ]);
 
-  const studs = featuredDogs();
+  const slides: HeroSlide[] = hero.map(({ slug, name, dog, photo }) => ({
+    slug,
+    name,
+    descriptor: dogDescriptor(dog),
+    photo,
+  }));
+
   const terms = studs.find((dog) => dog.studFee !== undefined);
 
   return (
@@ -31,9 +51,9 @@ export default function HomePage() {
       <Hero slides={slides} />
       <KennelStatement />
       <StudsSection dogs={studs} studFee={terms?.studFee} lockInFee={terms?.lockInFee} />
-      <BreedingsPreview />
-      <FemalesPreview females={dogsByRole("female")} photo={photos.minnie02} />
-      <ClosingBand available={availableDogs()} />
+      <BreedingsPreview breedings={breedings} dogs={allDogs} />
+      <FemalesPreview females={females} photo={femalePhoto} />
+      <ClosingBand available={available} />
     </>
   );
 }

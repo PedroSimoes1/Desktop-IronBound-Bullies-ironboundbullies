@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { photos } from "@/content/photos";
+import { requirePhotoById } from "@/db/queries/public";
 import { focalFor, focalToObjectPosition } from "@/lib/images/focal";
 import { contact, site } from "@/lib/site";
 import styles from "./page.module.css";
@@ -25,8 +25,8 @@ export const metadata: Metadata = {
  * Still to come from the owner: the kennel's story, breeding philosophy, care
  * and health practices, registration, and the puppy process.
  */
-export default function AboutPage() {
-  const photo = photos.missy01;
+export default async function AboutPage() {
+  const photo = await requirePhotoById("missy-01");
 
   return (
     <article className={styles.page}>

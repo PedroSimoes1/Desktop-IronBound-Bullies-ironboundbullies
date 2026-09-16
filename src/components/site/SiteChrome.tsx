@@ -11,16 +11,35 @@ import type { ReactNode } from "react";
  * the owner to tap "Inquire" on his own kennel. The header and footer are
  * passed in as already-rendered server components, so nothing about them moves
  * to the browser just because this decision happens there.
+ *
+ * The <main> landmark is opened here rather than in the layout, because the
+ * owner area has to open its own: its bar and its tabs are page furniture, and
+ * a <header> or <nav> nested inside <main> stops being a landmark a screen
+ * reader can jump to.
  */
-export function SiteChrome({ header, footer, children }: { header: ReactNode; footer: ReactNode; children: ReactNode }) {
+export function SiteChrome({
+  header,
+  footer,
+  mainClassName,
+  children,
+}: {
+  header: ReactNode;
+  footer: ReactNode;
+  mainClassName: string;
+  children: ReactNode;
+}) {
   const pathname = usePathname();
   const isOwnerArea = pathname === "/owner" || pathname.startsWith("/owner/");
 
+  if (isOwnerArea) return <>{children}</>;
+
   return (
     <>
-      {!isOwnerArea && header}
-      {children}
-      {!isOwnerArea && footer}
+      {header}
+      <main id="main" className={mainClassName}>
+        {children}
+      </main>
+      {footer}
     </>
   );
 }

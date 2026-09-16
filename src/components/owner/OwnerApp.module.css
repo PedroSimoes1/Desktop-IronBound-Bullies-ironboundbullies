@@ -6,23 +6,22 @@
   --scroll-margin-bottom: 10rem;
 }
 
-/* While the soft keyboard is up there is very little screen left, and the
-   section tabs are not what you are reaching for mid-sentence. Hiding them
-   returns 64px to the part you are actually reading. The bar is fixed, so
-   nothing reflows. Touch devices only: a mouse opens no keyboard. */
-@media (pointer: coarse) {
-  .app:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea):focus) {
-    /* Zeroing the token rather than hiding the bar alone means everything
-       measured against the tabs closes the gap with them: the unpublished
-       changes bar drops to sit directly on the keyboard, where your thumb
-       already is. */
-    --owner-nav-height: 0px;
-  }
-
-  .app:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea):focus) .nav {
-    display: none;
-  }
-}
+/* This used to hide the section tabs while a field had focus, to hand 64px
+   back to the part of the screen you are reading, and drop the unpublished
+   changes bar down onto the keyboard.
+ *
+ * It had to go, and the reason is worth keeping written down.
+ *
+ * Focus leaves the text field the instant a finger presses Save. The rule
+ * stopped matching, the tabs came back, and the bar jumped up 64px between
+ * the press and the release. The browser then delivered the click to whatever
+ * the two ends had in common, which was the page, not the button: on a phone,
+ * typing a description and tapping Save did nothing at all, silently.
+ *
+ * Nothing that moves under a thumb mid-press is worth 64px. The layout
+ * viewport already shrinks when the Android keyboard opens
+ * (interactive-widget: resizes-content in app/layout.tsx), so the bar sits
+ * above the keyboard without any of this. */
 
 /* ---------------------------------------------------------------------------
    PROTOTYPE NOTICE
@@ -89,6 +88,15 @@
   display: flex;
   align-items: baseline;
   gap: var(--space-3);
+}
+
+/* The wordmark is a link home now, so it needs a thumb-sized target like every
+   other link, gained by padding the negative margin cancels. */
+@media (pointer: coarse) {
+  a.brand {
+    padding-block: 12px;
+    margin-block: -12px;
+  }
 }
 
 .brandName {

@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { StatusLabel } from "@/components/ui/StatusLabel";
-import { dogs, getDogBySlug } from "@/content/dogs";
+import { getDogBySlug, getDogSlugs, getDogs } from "@/db/queries/public";
 import { formatMoney, formatSex, type Dog } from "@/lib/domain/dog";
 import { dogDescriptor } from "@/lib/domain/format";
 import { site } from "@/lib/site";
@@ -23,13 +23,13 @@ import styles from "./page.module.css";
  * a composed page rather than a grey box.
  */
 
-export function generateStaticParams() {
-  return dogs.map((dog) => ({ slug: dog.slug }));
+export async function generateStaticParams() {
+  return (await getDogSlugs()).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: PageProps<"/dogs/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const dog = getDogBySlug(slug);
+  const dog = await getDogBySlug(slug);
   if (!dog) return { title: "Dog not found" };
   const descriptor = dogDescriptor(dog);
   return {
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: PageProps<"/dogs/[slug]">): P
 
 type Fact = { label: string; value: string };
 
-function factsFor(dog: Dog): Fact[] {
+function factsFor(dog: Dog, others: Dog[]): Fact[] {
   const facts: Fact[] = [];
   if (dog.sex) facts.push({ label: "Sex", value: formatSex(dog.sex) });
   if (dog.color) facts.push({ label: "Color", value: dog.color });
@@ -53,8 +53,9 @@ function factsFor(dog: Dog): Fact[] {
   if (dog.weightLbs) facts.push({ label: "Weight", value: `${dog.weightLbs} lb` });
   if (dog.dateOfBirth) facts.push({ label: "Born", value: dog.dateOfBirth });
 
-  const sire = dog.sireId ? getDogBySlug(dog.sireId)?.name : dog.sireName;
-  const dam = dog.damId ? getDogBySlug(dog.damId)?.name : dog.damName;
+  const byId = (id: string) => others.find((d) => d.id === id || d.slug === id)?.name;
+  const sire = dog.sireId ? byId(dog.sireId) : dog.sireName;
+  const dam = dog.damId ? byId(dog.damId) : dog.damName;
   if (sire) facts.push({ label: "Sire", value: sire });
   if (dam) facts.push({ label: "Dam", value: dam });
   if (dog.bloodline) facts.push({ label: "Bloodline", value: dog.bloodline });
@@ -64,11 +65,11 @@ function factsFor(dog: Dog): Fact[] {
 
 export default async function DogPage({ params }: PageProps<"/dogs/[slug]">) {
   const { slug } = await params;
-  const dog = getDogBySlug(slug);
+  const [dog, others] = await Promise.all([getDogBySlug(slug), getDogs()]);
   if (!dog) notFound();
 
   const descriptor = dogDescriptor(dog);
-  const facts = factsFor(dog);
+  const facts = factsFor(dog, others);
   const isStud = dog.role === "stud";
   const hasPrice = dog.price !== undefined || dog.contactForPrice;
   const gallery = (dog.gallery ?? []).filter((photo) => photo.id !== dog.mainPhoto?.id);

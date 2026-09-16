@@ -1,114 +1,91 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef } from "react";
-import { DogCard } from "@/components/dogs/DogCard";
-import { StatusLabel } from "@/components/ui/StatusLabel";
 import { Button } from "@/components/ui/Button";
-import { formatMoney, type Dog } from "@/lib/domain/dog";
-import { effectiveFields, type OwnerDog } from "@/lib/owner/demo";
+import { StatusLabel } from "@/components/ui/StatusLabel";
+import type { DogStatus } from "@/lib/domain/dog";
+import type { Photo } from "@/lib/domain/photo";
+import { focalFor, focalToObjectPosition } from "@/lib/images/focal";
 import styles from "./PreviewSheet.module.css";
 
 /**
- * Preview: the same components the public website uses, fed the edited values.
+ * What the dog will look like once this is published.
  *
- * This is not a drawing of the website. The card below is the real DogCard and
- * the status is the real StatusLabel, so what the owner sees here is what a
- * customer gets. The whole preview is inert: it is for looking at, and a stray
- * tap cannot navigate out of the dashboard.
+ * Built from the same StatusLabel the public site uses, fed the values
+ * currently in the form, so this is the real thing rather than a drawing of it.
+ *
+ * A native <dialog> opened with showModal(), which brings the focus trap,
+ * Escape to close, the rest of the page made inert, and focus returned where
+ * it came from, all without a line of code for any of it.
  */
+interface PreviewSheetProps {
+  open: boolean;
+  onClose: () => void;
+  name: string;
+  slug: string;
+  status?: DogStatus;
+  summary: string;
+  meta: string;
+  photo?: Photo;
+}
 
-export function PreviewSheet({ dog, open, onClose }: { dog: OwnerDog; open: boolean; onClose: () => void }) {
+export function PreviewSheet({ open, onClose, name, slug, status, summary, meta, photo }: PreviewSheetProps) {
   const ref = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
-    if (open && !dialog.open) {
-      dialog.showModal();
-      const previous = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = previous;
-        if (dialog.open) dialog.close();
-      };
-    }
+    if (open && !dialog.open) dialog.showModal();
+    if (!open && dialog.open) dialog.close();
   }, [open]);
 
-  const fields = effectiveFields(dog);
-  const isStud = dog.role === "stud";
-
-  // The shape the public components expect, built from the edited values.
-  const asPublicDog: Dog = {
-    id: dog.id,
-    slug: dog.slug,
-    name: dog.name,
-    role: dog.role,
-    breed: dog.breed,
-    color: dog.color,
-    status: fields.status,
-    summary: fields.summary,
-    price: fields.price,
-    contactForPrice: fields.contactForPrice,
-    studFee: fields.studFee,
-    lockInFee: fields.lockInFee,
-    mainPhoto: dog.photo,
-  };
-
   return (
-    <dialog
-      ref={ref}
-      className={styles.sheet}
-      aria-label={`Preview of ${dog.name} on the website`}
-      onClose={onClose}
-      onCancel={(event) => {
-        event.preventDefault();
-        onClose();
-      }}
-    >
+    <dialog ref={ref} className={styles.sheet} onClose={onClose} aria-label={`Preview of ${name}`}>
       <div className={styles.bar}>
-        <p className={["label", styles.barTitle].join(" ")}>Preview</p>
-        <button type="button" className={styles.close} onClick={onClose}>
+        <span className={["label", styles.barTitle].join(" ")}>Preview</span>
+        <button type="button" className={styles.close} onClick={onClose} aria-label="Back to editing">
           <span className={styles.closeIcon} aria-hidden="true" />
-          <span className="sr-only">Close preview</span>
         </button>
       </div>
 
       <div className={styles.body}>
-        <p className={["body-sm", styles.intro].join(" ")}>
-          This is how {dog.name} will look once you publish. Nothing on your website has changed yet.
+        <p className={["body", styles.intro].join(" ")}>
+          This is how {name} will look once you publish. Nothing on your website has changed yet.
         </p>
 
-        <section className={styles.block} aria-label="On the Our dogs page">
-          <h3 className={["label", styles.blockTitle].join(" ")}>On the Our dogs page</h3>
-          <div className={styles.cardFrame} inert aria-hidden="true">
-            <DogCard dog={asPublicDog} sizes="(min-width: 640px) 20rem, 80vw" />
-          </div>
-        </section>
-
-        <section className={styles.block} aria-label="On the dog's own page">
-          <h3 className={["label", styles.blockTitle].join(" ")}>On {dog.name}&rsquo;s own page</h3>
+        <div className={styles.block}>
+          <span className={["label", styles.blockTitle].join(" ")}>On the dog&rsquo;s page</span>
+          {photo && (
+            <div className={styles.cardFrame}>
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                width={photo.width}
+                height={photo.height}
+                sizes="(min-width: 640px) 20rem, 90vw"
+                placeholder={photo.blurDataUrl ? "blur" : "empty"}
+                blurDataURL={photo.blurDataUrl}
+                style={{ objectPosition: focalToObjectPosition(focalFor(photo, "portrait")) }}
+              />
+            </div>
+          )}
           <div className={styles.profileBits}>
-            <p className={["display-2", styles.profileName].join(" ")}>{dog.name}</p>
-            {fields.status && <StatusLabel status={fields.status} />}
-            {fields.summary && <p className={["body", styles.profileSummary].join(" ")}>{fields.summary}</p>}
-            {isStud && fields.studFee !== undefined && (
-              <p className={["body", "muted"].join(" ")}>
-                Stud fee {formatMoney(fields.studFee)}
-                {fields.lockInFee !== undefined ? `, ${formatMoney(fields.lockInFee)} lock-in` : ""}
-              </p>
-            )}
-            {!isStud && fields.price !== undefined && <p className={["body", "muted"].join(" ")}>{formatMoney(fields.price)}</p>}
-            {!isStud && fields.price === undefined && fields.contactForPrice && (
-              <p className={["body", "muted"].join(" ")}>Contact for pricing</p>
-            )}
+            <p className={["display-2", styles.profileName].join(" ")}>{name}</p>
+            {meta && <p className="label">{meta}</p>}
+            {status && <StatusLabel status={status} />}
+            {summary && <p className={["body", "muted", styles.profileSummary].join(" ")}>{summary}</p>}
           </div>
-        </section>
+        </div>
       </div>
 
       <div className={styles.footer}>
         <Button variant="secondary" fullWidth onClick={onClose}>
           Back to editing
         </Button>
+        <p className={["body-sm", styles.footerNote].join(" ")}>
+          It will be at <code>/dogs/{slug}</code>
+        </p>
       </div>
     </dialog>
   );

@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Field } from "@/components/ui/form/Field";
 import { Input, Select, Textarea } from "@/components/ui/form/controls";
-import { breedings, parentsOf } from "@/content/breedings";
-import { dogs, getDogBySlug } from "@/content/dogs";
+import { getBreedings, getDogs } from "@/db/queries/public";
+import { parentsOf } from "@/lib/domain/breeding";
 import { CONTACT_METHOD_LABELS, INQUIRY_TYPE_LABELS, type InquiryType } from "@/lib/domain/inquiry";
 import { pairingTitle } from "@/lib/domain/format";
 import { contact, isProduction } from "@/lib/site";
@@ -39,7 +39,8 @@ function inquiryTypeFromParam(value: string | undefined, fallback: InquiryType):
  */
 export default async function ContactPage({ searchParams }: PageProps<"/contact">) {
   const { dog: dogParam, type: typeParam, breeding: breedingParam } = await searchParams;
-  const preselected = typeof dogParam === "string" ? getDogBySlug(dogParam) : undefined;
+  const [dogs, breedings] = await Promise.all([getDogs(), getBreedings()]);
+  const preselected = typeof dogParam === "string" ? dogs.find((dog) => dog.slug === dogParam) : undefined;
   const defaultType = inquiryTypeFromParam(
     typeof typeParam === "string" ? typeParam : undefined,
     preselected?.role === "stud" ? "stud_service" : "general",
@@ -115,7 +116,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
                       </optgroup>
                       <optgroup label="Breedings">
                         {breedings.map((breeding) => {
-                          const parents = parentsOf(breeding);
+                          const parents = parentsOf(breeding, dogs);
                           if (!parents) return null;
                           return (
                             <option key={breeding.id} value={breeding.slug}>

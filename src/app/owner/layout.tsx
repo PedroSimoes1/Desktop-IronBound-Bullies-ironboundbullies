@@ -1,30 +1,22 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { OwnerApp } from "@/components/owner/OwnerApp";
-import { isProduction } from "@/lib/site";
+import { OwnerShell } from "@/components/owner/OwnerShell";
 
 /**
- * The owner area, as a design prototype.
+ * The owner area.
  *
- * Two deliberate guards while this is only a prototype:
+ * This layout does NOT check the session. It cannot: the sign-in page lives
+ * underneath it, and a layout that redirected everyone without a session would
+ * redirect people away from the page they go to in order to get one.
  *
- *  1. It does not exist on the live website. If VERCEL_ENV is production this
- *     route returns 404, so a demo dashboard can never appear on the real
- *     domain even by accident.
- *  2. It is never indexed, on any deployment.
- *
- * Neither of these is access control and neither is pretending to be. Nothing
- * here reads or writes a record, so there is nothing yet to protect; the real
- * protection is described in the implementation plan and has to exist before a
- * single real field is saved.
+ * The check happens one level down, in the pages themselves, through
+ * requireUser(). That is also the safer place for it: a check in a layout
+ * protects whatever happens to sit under it today, while a check in the page
+ * protects that page wherever it moves to.
  */
-
 export const metadata: Metadata = {
-  title: "Owner",
   robots: { index: false, follow: false },
 };
 
 export default function OwnerLayout({ children }: LayoutProps<"/owner">) {
-  if (isProduction) notFound();
-  return <OwnerApp>{children}</OwnerApp>;
+  return <OwnerShell>{children}</OwnerShell>;
 }

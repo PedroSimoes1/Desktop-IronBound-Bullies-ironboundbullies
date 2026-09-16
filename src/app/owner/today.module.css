@@ -44,3 +44,30 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+/* Dogs with an edit waiting. Amber, because forgetting to publish is the
+   mistake this screen exists to prevent. */
+.pendingList {
+  display: flex;
+  flex-direction: column;
+}
+
+.pendingLink {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--touch-target);
+  padding-block: var(--space-2);
+  border-bottom: var(--border-hairline);
+}
+
+.pendingName {
+  font-size: var(--text-lg);
+  color: var(--color-fg);
+}
+
+.pendingWhen {
+  flex: none;
+  color: var(--color-accent-fg);
+}
