@@ -82,15 +82,22 @@ export function databaseUrl(): string {
 }
 
 /**
- * Secret used to sign session cookies.
+ * There is deliberately no SESSION_SECRET.
  *
- * Any long random string. `openssl rand -base64 32` produces a good one.
- * Changing it signs every existing session out, which is the intended way to
- * revoke all sessions at once.
+ * This file used to declare one, and the setup instructions asked for it. It
+ * was never read, because this design has nothing to sign.
+ *
+ * A signed cookie is what you need when the cookie itself carries the claim:
+ * the server has to prove it wrote "you are the owner" rather than the visitor
+ * typing it. Here the cookie carries 32 random bytes and nothing else, and the
+ * database holds only a SHA-256 of them. Guessing a valid token means guessing
+ * 256 bits; forging one is not a different attack, it is the same hopeless
+ * one. Signing would add a key to store, rotate and eventually lose, in
+ * exchange for nothing.
+ *
+ * Kept as a note rather than deleted silently, so the next person to wonder
+ * where the session secret went finds the answer instead of adding one back.
  */
-export function sessionSecret(): string {
-  return required("SESSION_SECRET", "a random string used to sign sign-in cookies", "generate with: openssl rand -base64 32");
-}
 
 /**
  * Where uploaded photographs go.
@@ -130,18 +137,8 @@ export function supabaseStorage() {
   };
 }
 
-/**
- * Checks everything at once, for the build to call before it renders a page.
- * Reports every missing variable together rather than one per attempt.
- */
-export function assertConfigured(): void {
-  const missing: Missing[] = [];
-  const check = (name: string, why: string, where: string) => {
-    const v = process.env[name];
-    if (!v || v.trim() === "") missing.push({ name, why, where });
-  };
-
-  check("DATABASE_URL", "the Postgres connection string", "Supabase: Project Settings -> Database -> Connection string (pooled)");
-  check("SESSION_SECRET", "a random string used to sign sign-in cookies", "generate with: openssl rand -base64 32");
-  if (missing.length) fail(missing);
-}
+/* There was an assertConfigured() here that checked everything up front. It
+   was never called, and it listed a variable that does not exist, so it was
+   documentation pretending to be a check. Each function above fails at the
+   moment its value is needed, with a message naming that one variable, which
+   is the thing that actually helps. */

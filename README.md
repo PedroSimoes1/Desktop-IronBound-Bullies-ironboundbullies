@@ -98,7 +98,9 @@ cp .env.example .env.local
 npm run dev          # starts the development server
 ```
 
-`.env.local` needs two things filled in before the site will start: `DATABASE_URL` and `SESSION_SECRET`. If one is missing the application says so in plain English and names the file, rather than failing with a stack trace.
+`.env.local` needs one thing filled in before the site will start: `DATABASE_URL`. If it is missing the application says so in plain English and names both the file and the Vercel setting, rather than failing with a stack trace.
+
+There is no session secret. The sign-in cookie carries 32 random bytes and the database stores only a hash of them, so there is nothing to sign and no key to lose.
 
 For `DATABASE_URL` you can either paste the string from the hosted database, or run one on your own machine:
 
@@ -183,7 +185,6 @@ Every variable is documented in `.env.example`. Real values live only in Vercel'
 |---|---|---|
 | `DATABASE_URL` | everywhere | the Postgres connection string. Use the **transaction pooler** (port 6543) |
 | `DIRECT_DATABASE_URL` | migrations only | the same database, **direct** (port 5432). Not needed on Vercel |
-| `SESSION_SECRET` | everywhere | a long random string. Changing it signs nobody out |
 | `PHOTO_STORAGE` | optional | `local` or `supabase`. Defaults correctly; `local` is refused when deployed |
 | `SUPABASE_URL` | Preview, Production | the project URL. Also read at **build** time, so uploaded photographs render |
 | `SUPABASE_SERVICE_ROLE_KEY` | Preview, Production | server only. Never in a `NEXT_PUBLIC_` variable |
