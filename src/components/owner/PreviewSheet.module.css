@@ -145,3 +145,9 @@
   border-top: var(--border-hairline);
   background-color: var(--color-surface);
 }
+
+.footerNote {
+  margin-top: var(--space-3);
+  color: var(--color-fg-subtle);
+  text-align: center;
+}

@@ -24,6 +24,14 @@
   height: auto;
 }
 
+/* No photograph yet: the logo frame starts below the floating header, which a
+   photograph is designed to run under but the logo's ears are not. The strip
+   above it is the frame's own ground, so the column still reads as one block. */
+.mediaPlaceholder {
+  padding-top: var(--header-height);
+  background-color: var(--color-surface);
+}
+
 .intro {
   grid-area: intro;
   /* The name is sized against this column, not the window, so a long name
@@ -143,21 +151,6 @@
   }
 
   /* A dog we hold no photograph of gets a title page rather than an empty grid. */
-  .topSolo {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "intro";
-    min-height: 78dvh;
-    align-content: center;
-  }
-
-  .topSolo .intro {
-    max-width: 46rem;
-  }
-
-  .topSolo .introInner {
-    position: static;
-  }
-
   .factList {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }

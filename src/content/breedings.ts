@@ -4,6 +4,13 @@ import { dogs } from "./dogs";
 /**
  * Breeding records for the public Version 1.
  *
+ * NO LONGER THE SOURCE OF TRUTH. The website reads these records from
+ * Postgres (src/db/queries/public.ts). This file is kept for two reasons:
+ * `npm run db:import` reads it to seed a fresh database, and the owner
+ * prototype still uses it for demo data until the real editing screens
+ * replace it. Editing it changes neither the live site nor the preview.
+
+ *
  * Source: the current public profile (read 2026-09-09), which lists exactly two
  * breedings, each as a sire, a dam, and a bloodline headline in the owner's
  * own words. It states no dates and no status, so neither is stored here.

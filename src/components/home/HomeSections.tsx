@@ -3,7 +3,8 @@ import Image from "next/image";
 import { DogCard } from "@/components/dogs/DogCard";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { breedings, parentsOf } from "@/content/breedings";
+
+import { parentsOf, type Breeding } from "@/lib/domain/breeding";
 import type { Dog } from "@/lib/domain/dog";
 import type { Photo } from "@/lib/domain/photo";
 import { focalFor, focalToObjectPosition } from "@/lib/images/focal";
@@ -41,9 +42,15 @@ export function KennelStatement() {
   );
 }
 
+interface BreedingsPreviewProps {
+  breedings: Breeding[];
+  /** Used to turn a pairing's parent ids into names and profile links. */
+  dogs: Dog[];
+}
+
 /** Two pairings, set as type. Bully culture reads bloodlines, so the names and
  *  the owner's own bloodline headline carry the section without a photograph. */
-export function BreedingsPreview() {
+export function BreedingsPreview({ breedings, dogs }: BreedingsPreviewProps) {
   const plates = breedings.filter((breeding) => breeding.featured);
   if (plates.length === 0) return null;
 
@@ -57,7 +64,7 @@ export function BreedingsPreview() {
         </div>
         <ul role="list" className={styles.plates}>
           {plates.map((breeding) => {
-            const parents = parentsOf(breeding);
+            const parents = parentsOf(breeding, dogs);
             if (!parents) return null;
             return (
               <li key={breeding.id}>

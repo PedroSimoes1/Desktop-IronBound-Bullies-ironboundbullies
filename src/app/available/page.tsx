@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { DogCard } from "@/components/dogs/DogCard";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { availableDogs } from "@/content/dogs";
+import { getAvailableDogs } from "@/db/queries/public";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -16,8 +16,8 @@ export const metadata: Metadata = {
  * the page says so plainly and points at the next useful thing. No countdowns,
  * no scarcity theatre, no placeholder listings.
  */
-export default function AvailablePage() {
-  const available = availableDogs();
+export default async function AvailablePage() {
+  const available = await getAvailableDogs();
 
   return (
     <div className={styles.page}>

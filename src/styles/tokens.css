@@ -103,6 +103,11 @@
   --owner-nav-height: 4rem;          /* 64, plus the device's safe area */
 
   --touch-target: 3rem;  /* 48: minimum tap size on mobile */
+
+  /* The logo shown in a dog's photo frame until the owner uploads a photograph.
+     A fraction of the frame, so it scales with every card size and never
+     touches the edges. */
+  --photo-placeholder-inset: 14%;
   --control-height: 3rem;          /* buttons + inputs */
   --control-height-compact: 2.75rem; /* 44: desktop nav buttons */
 

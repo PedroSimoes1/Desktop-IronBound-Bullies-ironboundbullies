@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { DogCollection } from "@/components/dogs/DogCollection";
-import { dogsByRole } from "@/content/dogs";
+import { getDogsByRole } from "@/db/queries/public";
 
 export const metadata: Metadata = {
   title: "Studs",
@@ -8,6 +8,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/dogs/studs" },
 };
 
-export default function StudsPage() {
-  return <DogCollection title="Studs" lede="Males standing at stud." filter="studs" dogs={dogsByRole("stud")} />;
+export default async function StudsPage() {
+  return <DogCollection title="Studs" lede="Males standing at stud." filter="studs" dogs={await getDogsByRole("stud")} />;
 }

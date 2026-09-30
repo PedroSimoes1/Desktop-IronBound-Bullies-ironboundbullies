@@ -44,11 +44,6 @@
   object-fit: cover;
 }
 
-.headEmpty {
-  color: var(--color-fg-subtle);
-  font-size: 10px;
-}
-
 .headText {
   display: flex;
   flex-direction: column;
@@ -282,4 +277,27 @@
   .actionStatus {
     flex: 1;
   }
+}
+
+/* The form renders its own panels, because a <form> cannot be split across
+   several <section> wrappers without losing the fields inside them. */
+.panel {
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+  background-color: var(--color-surface);
+  border: var(--border-hairline);
+}
+
+.panelTitle {
+  display: block;
+  margin-bottom: var(--space-4);
+  color: var(--color-fg-subtle);
+}
+
+.failedBox {
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+  background-color: var(--color-surface);
+  border-left: 2px solid var(--color-accent);
+  color: var(--color-fg);
 }

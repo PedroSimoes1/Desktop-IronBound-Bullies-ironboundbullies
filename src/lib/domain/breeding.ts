@@ -27,6 +27,39 @@ export const BREEDING_STATUS_ORDER: readonly BreedingStatus[] = [
   "completed",
 ];
 
+export interface BreedingParents {
+  sireName: string;
+  damName: string;
+  /** Profile links, present only for dogs that have a page here. */
+  sireHref?: string;
+  damHref?: string;
+}
+
+/**
+ * Resolves a pairing's parents to display names and, where they exist, links.
+ *
+ * The kennel's own dogs are matched from the list passed in; an outside dog
+ * the owner named but does not own has a name and no page, so it renders as
+ * plain text. A pairing missing either name renders nothing at all rather
+ * than half a pairing.
+ */
+export function parentsOf(
+  breeding: Breeding,
+  dogs: { id: string; slug: string; name: string }[],
+): BreedingParents | undefined {
+  const sire = breeding.sireId ? dogs.find((dog) => dog.id === breeding.sireId || dog.slug === breeding.sireId) : undefined;
+  const dam = breeding.damId ? dogs.find((dog) => dog.id === breeding.damId || dog.slug === breeding.damId) : undefined;
+  const sireName = sire?.name ?? breeding.sireName;
+  const damName = dam?.name ?? breeding.damName;
+  if (!sireName || !damName) return undefined;
+  return {
+    sireName,
+    damName,
+    sireHref: sire ? `/dogs/${sire.slug}` : undefined,
+    damHref: dam ? `/dogs/${dam.slug}` : undefined,
+  };
+}
+
 export interface Breeding {
   id: string;
   /** URL segment: /breedings/voodoo-x-sriracha */

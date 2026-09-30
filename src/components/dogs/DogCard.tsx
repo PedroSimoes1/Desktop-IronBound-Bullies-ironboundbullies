@@ -1,9 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Dog } from "@/lib/domain/dog";
 import { dogCardMeta, isCardStatus } from "@/lib/domain/format";
-import { focalFor, focalToObjectPosition } from "@/lib/images/focal";
 import { StatusLabel } from "@/components/ui/StatusLabel";
+import { DogPhoto } from "./DogPhoto";
 import styles from "./DogCard.module.css";
 
 /**
@@ -14,6 +13,9 @@ import styles from "./DogCard.module.css";
  * Frames are square by default because most of the photographs are finished
  * posters whose lettering a taller crop would cut through. `ratio="wide"` is
  * for the two frames that were shot landscape and read better at 3:2.
+ *
+ * A dog without a photograph shows the kennel logo in the same frame (see
+ * DogPhoto), so a card is the same shape with or without one.
  */
 
 interface DogCardProps {
@@ -48,21 +50,14 @@ export function DogCard({
       className={[styles.card, size === "large" ? styles.large : "", ratio === "wide" ? styles.wide : ""].filter(Boolean).join(" ")}
     >
       <div className={styles.frame}>
-        {dog.mainPhoto ? (
-          <Image
-            src={dog.mainPhoto.src}
-            alt={dog.mainPhoto.alt}
-            fill
-            sizes={sizes}
-            priority={priority}
-            placeholder={dog.mainPhoto.blurDataUrl ? "blur" : "empty"}
-            blurDataURL={dog.mainPhoto.blurDataUrl}
-            className={styles.image}
-            style={{ objectPosition: focalToObjectPosition(focalFor(dog.mainPhoto, orientation)) }}
-          />
-        ) : (
-          <div className={styles.placeholder} aria-hidden="true" />
-        )}
+        <DogPhoto
+          photo={dog.mainPhoto}
+          dogName={dog.name}
+          sizes={sizes}
+          orientation={orientation}
+          priority={priority}
+          className={styles.image}
+        />
       </div>
       <div className={styles.body}>
         <Heading className={[size === "large" ? "display-2" : "display-3", styles.name].join(" ")}>{dog.name}</Heading>

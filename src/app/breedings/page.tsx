@@ -4,8 +4,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { StatusLabel } from "@/components/ui/StatusLabel";
-import { breedings, parentsOf } from "@/content/breedings";
-import { getDogBySlug } from "@/content/dogs";
+import { getBreedings, getDogs } from "@/db/queries/public";
+import { parentsOf } from "@/lib/domain/breeding";
 import type { Photo } from "@/lib/domain/photo";
 import { focalFor, focalToObjectPosition } from "@/lib/images/focal";
 import styles from "./page.module.css";
@@ -27,7 +27,9 @@ export const metadata: Metadata = {
  * Each pairing carries a different photograph of the sire, so the page never
  * prints the same frame twice.
  */
-export default function BreedingsPage() {
+export default async function BreedingsPage() {
+  const [breedings, dogs] = await Promise.all([getBreedings(), getDogs()]);
+
   return (
     <div className={styles.page}>
       <Container width="wide">
@@ -40,9 +42,9 @@ export default function BreedingsPage() {
 
         <ul role="list" className={styles.list}>
           {breedings.map((breeding, index) => {
-            const parents = parentsOf(breeding);
+            const parents = parentsOf(breeding, dogs);
             if (!parents) return null;
-            const sire = breeding.sireId ? getDogBySlug(breeding.sireId) : undefined;
+            const sire = breeding.sireId ? dogs.find((d) => d.id === breeding.sireId || d.slug === breeding.sireId) : undefined;
             const gallery = sire?.gallery ?? [];
             const photo: Photo | undefined = gallery.length > 0 ? gallery[index % gallery.length] : sire?.mainPhoto;
 

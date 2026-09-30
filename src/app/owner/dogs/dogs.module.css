@@ -55,11 +55,6 @@
   object-fit: cover;
 }
 
-.thumbEmpty {
-  color: var(--color-fg-subtle);
-  font-size: 10px;
-}
-
 .rowBody {
   display: flex;
   flex-direction: column;

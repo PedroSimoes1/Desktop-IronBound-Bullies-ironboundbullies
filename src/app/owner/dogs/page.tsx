@@ -1,101 +1,49 @@
-"use client";
-
-import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { Note, ScreenTitle } from "@/components/owner/ui";
-import { Field } from "@/components/ui/form/Field";
-import { Input } from "@/components/ui/form/controls";
+import { DogPhoto } from "@/components/dogs/DogPhoto";
+import { ScreenTitle } from "@/components/owner/ui";
+import { listDogsForOwner } from "@/db/queries/owner";
+import { currentKennelId, requireUser } from "@/lib/auth/guard";
 import { DOG_STATUS_LABELS } from "@/lib/domain/dog";
-import { focalFor, focalToObjectPosition } from "@/lib/images/focal";
-import { hasChanges } from "@/lib/owner/demo";
-import { useOwnerStore } from "@/lib/owner/store";
+import { DogSearch } from "./DogSearch";
 import styles from "./dogs.module.css";
 
 /**
  * The dogs list.
  *
- * A photograph, the name, and the one fact the owner is usually here to check
- * or change: availability. A dog with an edit waiting says so in amber, because
- * "I changed this and forgot to publish it" is the mistake this screen exists
- * to prevent.
+ * A photograph (or the kennel logo until there is one), the name, and the one
+ * fact the owner is usually here to change. A dog with an unpublished edit says so in amber.
  */
-export default function OwnerDogsPage() {
-  const { dogs } = useOwnerStore();
-  const [query, setQuery] = useState("");
+export const dynamic = "force-dynamic";
 
-  const matches = useMemo(() => {
-    const term = query.trim().toLowerCase();
-    if (!term) return dogs;
-    return dogs.filter((dog) => `${dog.name} ${dog.color ?? ""} ${dog.breed ?? ""}`.toLowerCase().includes(term));
-  }, [dogs, query]);
+export default async function OwnerDogsPage() {
+  const user = await requireUser("/owner/dogs");
+  const kennelId = await currentKennelId(user);
+  const dogs = await listDogsForOwner(kennelId);
 
   return (
     <>
       <ScreenTitle title="Dogs" lede="Tap a dog to change what the website shows." />
+      <DogSearch total={dogs.length}>
+        {dogs.map((dog) => (
+          <li key={dog.id} data-search={`${dog.name} ${dog.color ?? ""}`.toLowerCase()}>
+            <Link href={`/owner/dogs/${dog.id}`} className={styles.row}>
+              <span className={styles.thumb}>
+                <DogPhoto photo={dog.thumbnail} dogName={dog.name} alt="" sizes="72px" className={styles.thumbImage} />
+              </span>
 
-      <div className={styles.search}>
-        <Field label="Search by name or colour" requirement="none">
-          {(ids) => (
-            <Input
-              {...ids}
-              type="search"
-              inputMode="search"
-              autoComplete="off"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Voodoo, blue tri"
-            />
-          )}
-        </Field>
-      </div>
+              <span className={styles.rowBody}>
+                <span className={styles.rowName}>{dog.name}</span>
+                <span className={["body-sm", styles.rowMeta].join(" ")}>
+                  {dog.publishedStatus ? DOG_STATUS_LABELS[dog.publishedStatus] : "No availability set"}
+                </span>
+                {dog.hasDraft && <span className={["label", styles.rowPending].join(" ")}>Not published</span>}
+              </span>
 
-      {matches.length === 0 ? (
-        <div className={styles.empty}>
-          <Note>No dog matches &ldquo;{query.trim()}&rdquo;. Check the spelling, or clear the search to see all {dogs.length}.</Note>
-        </div>
-      ) : (
-        <ul role="list" className={styles.list}>
-          {matches.map((dog) => {
-            const pending = hasChanges(dog);
-            const status = dog.published.status;
-            return (
-              <li key={dog.id}>
-                <Link href={`/owner/dogs/${dog.id}`} className={styles.row}>
-                  <span className={styles.thumb}>
-                    {dog.photo ? (
-                      <Image
-                        src={dog.photo.src}
-                        alt=""
-                        fill
-                        sizes="72px"
-                        placeholder={dog.photo.blurDataUrl ? "blur" : "empty"}
-                        blurDataURL={dog.photo.blurDataUrl}
-                        className={styles.thumbImage}
-                        style={{ objectPosition: focalToObjectPosition(focalFor(dog.photo, "portrait")) }}
-                      />
-                    ) : (
-                      <span className={["label", styles.thumbEmpty].join(" ")} aria-hidden="true">
-                        No photo
-                      </span>
-                    )}
-                  </span>
-
-                  <span className={styles.rowBody}>
-                    <span className={styles.rowName}>{dog.name}</span>
-                    <span className={["body-sm", styles.rowMeta].join(" ")}>
-                      {status ? DOG_STATUS_LABELS[status] : "No availability set"}
-                    </span>
-                    {pending && <span className={["label", styles.rowPending].join(" ")}>Not published</span>}
-                  </span>
-
-                  <span className={styles.chevron} aria-hidden="true" />
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+              <span className={styles.chevron} aria-hidden="true" />
+            </Link>
+          </li>
+        ))}
+      </DogSearch>
     </>
   );
 }
