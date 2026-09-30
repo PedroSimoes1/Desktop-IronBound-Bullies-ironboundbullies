@@ -44,7 +44,8 @@ src/
     fonts.ts           the two type families, loaded with next/font/local
   components/
     ui/                building blocks: Button, StatusLabel, Container, Section, Wordmark, form/
-    dogs/              DogCard, DogCollection (picture cards plus a typographic roster)
+    dogs/              DogCard, DogCollection (picture cards plus a typographic roster),
+                       DogPhoto (a dog's photograph, or the kennel logo until it has one)
     home/              Hero (carousel), StudsSection, HomeSections
     site/              SiteHeader (floating, native <dialog> menu), SiteFooter
   content/             dogs.ts, photos.ts, breedings.ts — the original records, now only the seed for `npm run db:import`
@@ -76,6 +77,7 @@ src/
   fonts/               self-hosted .woff2 files + licenses (built by tools/fonts/build_fonts.py)
 drizzle/               database migrations, in order. Committed, never edited after being applied
 tests/owner.e2e.mjs    the owner area, end to end, against a real database and a real browser
+tests/placeholder.e2e.mjs the logo placeholder: every screen, five screen sizes, upload and removal
 tools/
   fonts/build_fonts.py Python dev tool: fetch, subset and convert the fonts (not used at runtime)
   photos/prepare_photos.py Python dev tool: originals → metadata-free web masters
@@ -128,6 +130,7 @@ npm run lint         # code-quality checks
 npm run lint:copy    # no em-dashes or en-dashes in visitor-facing text
 npm run typecheck    # TypeScript only
 npm run test:e2e     # the owner area, end to end (see below)
+npm run test:placeholder # the logo placeholder, end to end (same setup as test:e2e)
 npm run db:studio    # a browser window onto the database tables
 npm run owner:list   # who has an account, and what they can reach
 npm run db:local stop    # stop the local Postgres · `reset` throws it away and starts again
@@ -235,3 +238,10 @@ Verified across 65 page and viewport combinations at 390, 430, 768, 1440, and 25
 ### Business facts that must be confirmed before launch
 
 The phone number, email address and Instagram handle rendered in the footer, on `/about` and on `/contact` were migrated from the kennel's current public profile and live in `src/lib/site.ts`. They are audit items V10 and V11: confirm them, and decide whether the aol address is replaced by a domain address, before the site goes live. `src/content/dogs.ts` and `src/content/breedings.ts` carry the same caveat for every dog fact and both pairings.
+
+## The photo placeholder
+
+A dog with no photograph shows the kennel logo (`public/images/ironbound-placeholder-logo.png`) in its photo frame: on cards, on its profile, in the owner's dog list, at the top of the edit screen, and in the preview. `src/components/dogs/DogPhoto.tsx` is the only place that decides between the photograph and the logo.
+
+The logo is not data. It is never saved as a photograph, so there is nothing for the owner to remove: the first upload replaces it everywhere, and deleting the last photograph brings it back. On `/dogs`, dogs without a photograph stay in the text-only "Also in the program" list by choice, so the grid never fills with repeated logos.
+
