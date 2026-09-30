@@ -1,0 +1,29 @@
+/* The frame a dog without a photograph shows. Same ground as an empty photo
+   frame always had, so the black-and-gold logo reads on it; no gradient, no
+   shadow, no motion. */
+.placeholder {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background-color: var(--color-surface);
+}
+
+/* With no photograph to take a height from, the frame is square: the logo's
+   own shape, and the ratio most of the kennel's photographs are shown at. */
+.intrinsic {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.logo {
+  position: absolute;
+  inset: var(--photo-placeholder-inset);
+  display: block;
+}
+
+/* Contained, never cropped or stretched, whatever shape the frame is. */
+.logoImage {
+  object-fit: contain;
+}
