@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { DogPhoto } from "@/components/dogs/DogPhoto";
 import { Button } from "@/components/ui/Button";
 import { StatusLabel } from "@/components/ui/StatusLabel";
 import { getDogBySlug, getDogSlugs, getDogs } from "@/db/queries/public";
@@ -19,8 +20,9 @@ import styles from "./page.module.css";
  * Everything the kennel has said about the dog lives in one column beside the
  * photograph: name, descriptor, status, the owner's sentence, the terms, the
  * action, then the facts. A row is rendered only when its value is known, so
- * there are never empty labels, and a dog we hold no photograph of still gets
- * a composed page rather than a grey box.
+ * there are never empty labels. A dog we hold no photograph of shows the
+ * kennel logo in the photograph's place (see DogPhoto), so the page keeps its
+ * two-column composition and the first upload drops straight into it.
  */
 
 export async function generateStaticParams() {
@@ -77,22 +79,17 @@ export default async function DogPage({ params }: PageProps<"/dogs/[slug]">) {
 
   return (
     <article className={styles.profile} data-bleed-top="">
-      <div className={[styles.top, dog.mainPhoto ? "" : styles.topSolo].filter(Boolean).join(" ")}>
-        {dog.mainPhoto && (
-          <div className={styles.media}>
-            <Image
-              src={dog.mainPhoto.src}
-              alt={dog.mainPhoto.alt}
-              width={dog.mainPhoto.width}
-              height={dog.mainPhoto.height}
-              sizes="(min-width: 1024px) 58vw, 100vw"
-              priority
-              placeholder={dog.mainPhoto.blurDataUrl ? "blur" : "empty"}
-              blurDataURL={dog.mainPhoto.blurDataUrl}
-              className={styles.mainPhoto}
-            />
-          </div>
-        )}
+      <div className={styles.top}>
+        <div className={[styles.media, dog.mainPhoto ? "" : styles.mediaPlaceholder].filter(Boolean).join(" ")}>
+          <DogPhoto
+            photo={dog.mainPhoto}
+            dogName={dog.name}
+            layout="intrinsic"
+            sizes="(min-width: 1024px) 58vw, 100vw"
+            priority
+            className={styles.mainPhoto}
+          />
+        </div>
 
         <div className={styles.intro}>
           <div className={styles.introInner}>
