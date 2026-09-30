@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { discardDraftAction, publishAction, saveDraftAction, type ActionResult } from "@/app/owner/actions";
+import { DogPhoto } from "@/components/dogs/DogPhoto";
 import { PreviewSheet } from "@/components/owner/PreviewSheet";
 import { PrivateMark } from "@/components/owner/ui";
 import { Button } from "@/components/ui/Button";
@@ -11,7 +11,6 @@ import { Field } from "@/components/ui/form/Field";
 import { Input, Textarea } from "@/components/ui/form/controls";
 import type { OwnerDogDetail } from "@/db/queries/owner";
 import { DOG_STATUS_LABELS, type DogStatus } from "@/lib/domain/dog";
-import { focalFor, focalToObjectPosition } from "@/lib/images/focal";
 import styles from "./edit.module.css";
 
 /**
@@ -138,6 +137,9 @@ export function EditDogForm({ dog }: { dog: OwnerDogDetail }) {
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
 
+  // The same photograph the public cards use: the one marked main, else the
+  // first. Undefined when there are none, and the header shows the logo.
+  const mainPhoto = dog.photos.find((p) => p.isMain) ?? dog.photos[0];
   const summaryOver = summary.length > SUMMARY_LIMIT;
   const moneyInvalid = money.trim() !== "" && !/^\$?\d{1,7}(,\d{3})*(\.\d{1,2})?$/.test(money.trim());
   const hasDraft = draftExists;
@@ -147,18 +149,7 @@ export function EditDogForm({ dog }: { dog: OwnerDogDetail }) {
     <>
       <header className={styles.head}>
         <div className={styles.headPhoto}>
-          {dog.photos[0] ? (
-            <Image
-              src={dog.photos.find((p) => p.isMain)?.src ?? dog.photos[0].src}
-              alt=""
-              fill
-              sizes="96px"
-              className={styles.headImage}
-              style={{ objectPosition: focalToObjectPosition(focalFor(dog.photos[0], "portrait")) }}
-            />
-          ) : (
-            <span className={["label", styles.headEmpty].join(" ")}>No photo</span>
-          )}
+          <DogPhoto photo={mainPhoto} dogName={dog.name} alt="" sizes="96px" className={styles.headImage} />
         </div>
         <div className={styles.headText}>
           <h1 className={["display-2", styles.headName].join(" ")}>{dog.name}</h1>
@@ -316,7 +307,7 @@ export function EditDogForm({ dog }: { dog: OwnerDogDetail }) {
         slug={dog.slug}
         status={status || undefined}
         summary={summary}
-        photo={dog.photos.find((p) => p.isMain) ?? dog.photos[0]}
+        photo={mainPhoto}
         meta={[isStud ? "Stud" : dog.role === "female" ? "Female" : undefined, dog.color].filter(Boolean).join(" · ")}
       />
     </>

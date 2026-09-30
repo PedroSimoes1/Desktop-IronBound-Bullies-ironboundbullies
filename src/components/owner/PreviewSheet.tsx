@@ -1,12 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { DogPhoto } from "@/components/dogs/DogPhoto";
 import { Button } from "@/components/ui/Button";
 import { StatusLabel } from "@/components/ui/StatusLabel";
 import type { DogStatus } from "@/lib/domain/dog";
 import type { Photo } from "@/lib/domain/photo";
-import { focalFor, focalToObjectPosition } from "@/lib/images/focal";
 import styles from "./PreviewSheet.module.css";
 
 /**
@@ -56,20 +55,9 @@ export function PreviewSheet({ open, onClose, name, slug, status, summary, meta,
 
         <div className={styles.block}>
           <span className={["label", styles.blockTitle].join(" ")}>On the dog&rsquo;s page</span>
-          {photo && (
-            <div className={styles.cardFrame}>
-              <Image
-                src={photo.src}
-                alt={photo.alt}
-                width={photo.width}
-                height={photo.height}
-                sizes="(min-width: 640px) 20rem, 90vw"
-                placeholder={photo.blurDataUrl ? "blur" : "empty"}
-                blurDataURL={photo.blurDataUrl}
-                style={{ objectPosition: focalToObjectPosition(focalFor(photo, "portrait")) }}
-              />
-            </div>
-          )}
+          <div className={styles.cardFrame}>
+            <DogPhoto photo={photo} dogName={name} layout="intrinsic" sizes="(min-width: 640px) 20rem, 90vw" />
+          </div>
           <div className={styles.profileBits}>
             <p className={["display-2", styles.profileName].join(" ")}>{name}</p>
             {meta && <p className="label">{meta}</p>}

@@ -44,11 +44,6 @@
   object-fit: cover;
 }
 
-.headEmpty {
-  color: var(--color-fg-subtle);
-  font-size: 10px;
-}
-
 .headText {
   display: flex;
   flex-direction: column;

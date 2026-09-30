@@ -1,18 +1,17 @@
-import Image from "next/image";
 import Link from "next/link";
+import { DogPhoto } from "@/components/dogs/DogPhoto";
 import { ScreenTitle } from "@/components/owner/ui";
 import { listDogsForOwner } from "@/db/queries/owner";
 import { currentKennelId, requireUser } from "@/lib/auth/guard";
 import { DOG_STATUS_LABELS } from "@/lib/domain/dog";
-import { focalFor, focalToObjectPosition } from "@/lib/images/focal";
 import { DogSearch } from "./DogSearch";
 import styles from "./dogs.module.css";
 
 /**
  * The dogs list.
  *
- * A photograph, the name, and the one fact the owner is usually here to
- * change. A dog with an unpublished edit says so in amber.
+ * A photograph (or the kennel logo until there is one), the name, and the one
+ * fact the owner is usually here to change. A dog with an unpublished edit says so in amber.
  */
 export const dynamic = "force-dynamic";
 
@@ -29,22 +28,7 @@ export default async function OwnerDogsPage() {
           <li key={dog.id} data-search={`${dog.name} ${dog.color ?? ""}`.toLowerCase()}>
             <Link href={`/owner/dogs/${dog.id}`} className={styles.row}>
               <span className={styles.thumb}>
-                {dog.thumbnail ? (
-                  <Image
-                    src={dog.thumbnail.src}
-                    alt=""
-                    fill
-                    sizes="72px"
-                    placeholder={dog.thumbnail.blurDataUrl ? "blur" : "empty"}
-                    blurDataURL={dog.thumbnail.blurDataUrl}
-                    className={styles.thumbImage}
-                    style={{ objectPosition: focalToObjectPosition(focalFor(dog.thumbnail, "portrait")) }}
-                  />
-                ) : (
-                  <span className={["label", styles.thumbEmpty].join(" ")} aria-hidden="true">
-                    No photo
-                  </span>
-                )}
+                <DogPhoto photo={dog.thumbnail} dogName={dog.name} alt="" sizes="72px" className={styles.thumbImage} />
               </span>
 
               <span className={styles.rowBody}>
